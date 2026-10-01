@@ -8,3 +8,6 @@ out/
 .next/
 node_modules/
 package-lock.json
+
+# Generated Supabase types (npx supabase gen types typescript --local --schema public)
+src/lib/supabase/database.types.ts
