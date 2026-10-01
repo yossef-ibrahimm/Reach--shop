@@ -1,0 +1,107 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   Design tokens — docs/DESIGN.md ("Control Panel" direction).
+   Logical properties only: layout must use ms-/me-/ps-/pe-/text-start/inset-s-*.
+   ========================================================================== */
+@theme {
+  /* Palette */
+  --color-navy-950: #0b1220;
+  --color-navy-900: #111a2e;
+  --color-navy-800: #1b2640;
+  --color-navy-700: #2a3756;
+
+  --color-slate-600: #4a5672;
+  --color-slate-400: #8a94ab;
+  --color-slate-200: #dde2ec;
+  --color-slate-100: #eef1f6;
+
+  --color-paper: #f7f8fa;
+
+  --color-fire-600: #d7261e;
+  --color-fire-700: #b01e17;
+  --color-fire-50: #fdeceb;
+
+  --color-amber-500: #e8a317;
+  --color-amber-700: #8a5d05;
+
+  /* Darkened for WCAG AA on light surfaces and 12% tints (D-011) */
+  --color-green-600: #187a4c;
+  --color-blue-600: #2a63c0;
+  --color-whatsapp: #0f7b42;
+
+  /* Semantic mapping */
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef1f6;
+  --color-surface-inverse: #0b1220;
+  --color-text: #0b1220;
+  --color-muted: #4a5672;
+  --color-inverse: #f2f4f8;
+  --color-border: #dde2ec;
+  --color-primary: #d7261e;
+  --color-primary-hover: #b01e17;
+
+  /* Typography (font variables come from next/font on <html>) */
+  --font-sans: var(--font-inter), var(--font-cairo), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(11, 18, 32, 0.06);
+  --shadow-md: 0 6px 20px -6px rgba(11, 18, 32, 0.14);
+  --shadow-lg: 0 20px 40px -12px rgba(11, 18, 32, 0.22);
+
+  /* Motion — docs/DESIGN.md §7 */
+  --ease-out-quart: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Isolated LTR run for phone numbers / codes (PROJECT_SPEC §6.1). */
+@utility phone {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Arabic first: Cairo, comfortable 1.7 line-height. English mirrors with Inter. */
+  html[lang='ar'] {
+    font-family: var(--font-cairo), var(--font-inter), system-ui, sans-serif;
+    line-height: 1.7;
+  }
+
+  html[lang='en'] {
+    font-family: var(--font-inter), var(--font-cairo), system-ui, sans-serif;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(215 38 30 / 0.35);
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

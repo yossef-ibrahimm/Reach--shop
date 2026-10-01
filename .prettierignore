@@ -1,0 +1,10 @@
+# Docs are source-of-truth text, not code — never reformat them.
+docs/
+PROJECT_SPEC.md
+CLAUDE.md
+
+# Build output
+out/
+.next/
+node_modules/
+package-lock.json

@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "siteName": "Company Name",
+    "title": "Fire Alarm Systems — Product Showcase",
+    "description": "Showcase of fire alarm systems and accessories: control panels, smoke and heat detectors, sirens, batteries and cables."
+  },
+  "home": {
+    "heading": "Phase 0 — Scaffold",
+    "body": "Placeholder text to verify language and direction (LTR). It will be replaced by the home page content in Phase 2.",
+    "localeLabel": "Current language",
+    "switchLanguage": "العربية",
+    "adminLink": "Admin area"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The requested link is incorrect or the page has been removed.",
+    "backHome": "Back to the home page"
+  }
+}

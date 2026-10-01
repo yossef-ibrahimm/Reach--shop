@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>معاينة نظام التصميم — أنظمة إنذار الحريق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+ <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.2Z"/></symbol>
+ <symbol id="phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></symbol>
+ <symbol id="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+ <symbol id="cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+ <symbol id="smoke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2"/></symbol>
+ <symbol id="heat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0Z"/></symbol>
+ <symbol id="bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0M2 8c0-2.2.7-4.3 2-6M22 8a10 10 0 0 0-2-6"/></symbol>
+ <symbol id="battery" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 11v2M10 11v2"/></symbol>
+ <symbol id="cable" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 9a2 2 0 0 1-2-2V5h6v2a2 2 0 0 1-2 2Zm0 0v8a4 4 0 0 0 8 0V7a4 4 0 0 1 8 0v8m0 0a2 2 0 0 1 2 2v2h-6v-2a2 2 0 0 1 2-2Z"/></symbol>
+ <symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+ <symbol id="pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></symbol>
+</svg>
+
+<div class="topbar"><div class="container"><span>السبت – الخميس · 9 ص – 6 م</span><span class="ltr">+20 100 000 0000</span></div></div>
+
+<header class="site"><div class="container">
+  <a class="logo" href="#"><span class="logo-mark"></span>اسم الشركة</a>
+  <nav class="main"><a class="active" href="#">الرئيسية</a><a href="#">المنتجات</a><a href="#">من نحن</a><a href="#">تواصل معنا</a></nav>
+  <a class="lang" href="#">EN</a>
+  <a class="btn btn-outline btn-sm" href="#"><svg><use href="#phone"/></svg><span class="ltr">0100 000 0000</span></a>
+  <a class="btn btn-wa btn-sm" href="#"><svg><use href="#wa"/></svg>واتساب</a>
+</div></header>
+
+<section class="hero"><div class="container">
+  <div>
+    <span class="eyebrow">أنظمة إنذار ومكافحة الحريق</span>
+    <h1>حماية تبدأ <em>بالإنذار المبكر</em><br>لكل منشأة في مصر</h1>
+    <p>لوحات تحكم، كواشف دخان وحرارة، سارينات وملحقات — تقليدية وعنونة — من أفضل الماركات، مع دعم فني قبل وبعد التركيب.</p>
+    <div class="actions"><a class="btn btn-primary btn-lg" href="#">تصفح المنتجات <svg><use href="#arrow"/></svg></a><a class="btn btn-wa btn-lg" href="#"><svg><use href="#wa"/></svg>اسألنا على واتساب</a></div>
+  </div>
+  <div class="panel" aria-hidden="true">
+    <div class="panel-head"><span>لوحة تحكم · 8 زون</span><span class="ltr">SYSTEM NORMAL</span></div>
+    <div class="zones">
+      <div class="zone"><span class="led"></span>زون<b>01</b></div><div class="zone"><span class="led"></span>زون<b>02</b></div>
+      <div class="zone alarm"><span class="led"></span>إنذار<b>03</b></div><div class="zone"><span class="led"></span>زون<b>04</b></div>
+      <div class="zone"><span class="led"></span>زون<b>05</b></div><div class="zone"><span class="led"></span>زون<b>06</b></div>
+      <div class="zone"><span class="led"></span>زون<b>07</b></div><div class="zone"><span class="led"></span>زون<b>08</b></div>
+    </div>
+    <div class="panel-foot"><span><span class="led"></span>كهرباء</span><span><span class="led"></span>بطارية</span><span class="ltr">24V DC</span></div>
+  </div>
+</div></section>
+
+<section><div class="container">
+  <div class="sec-head"><div><span class="eyebrow">الأقسام</span><h2>تصفح حسب نوع الجهاز</h2></div><a class="btn btn-ghost" href="#">كل المنتجات <svg><use href="#arrow"/></svg></a></div>
+  <div class="cats">
+    <a class="cat" href="#"><span class="ic"><svg><use href="#cpu"/></svg></span><div><h3>لوحات التحكم</h3><small>12 منتج</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+    <a class="cat" href="#"><span class="ic"><svg><use href="#smoke"/></svg></span><div><h3>كواشف الدخان</h3><small>9 منتجات</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+    <a class="cat" href="#"><span class="ic"><svg><use href="#heat"/></svg></span><div><h3>كواشف الحرارة</h3><small>6 منتجات</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+    <a class="cat" href="#"><span class="ic"><svg><use href="#bell"/></svg></span><div><h3>السارينات والفلاشر</h3><small>8 منتجات</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+    <a class="cat" href="#"><span class="ic"><svg><use href="#battery"/></svg></span><div><h3>البطاريات</h3><small>5 منتجات</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+    <a class="cat" href="#"><span class="ic"><svg><use href="#cable"/></svg></span><div><h3>الكابلات والملحقات</h3><small>14 منتج</small></div><svg class="arr" width="20"><use href="#arrow"/></svg></a>
+  </div>
+</div></section>
+
+<section class="alt"><div class="container">
+  <div class="sec-head"><div><span class="eyebrow">مختارات</span><h2>منتجات مميزة</h2></div></div>
+  <div class="grid">
+    <a class="card" href="#"><div class="img"><svg><use href="#cpu"/></svg></div><div class="body"><span class="chip">GST</span><h3>لوحة تحكم تقليدية 4 زون</h3><div class="spec">4 zones · 24V DC</div><div class="foot"><span class="badge b-in">متوفر</span><svg width="18"><use href="#arrow"/></svg></div></div></a>
+    <a class="card" href="#"><div class="img"><svg><use href="#smoke"/></svg></div><div class="body"><span class="chip">عام (صيني)</span><h3>كاشف دخان تقليدي فوتو إلكتريك</h3><div class="spec">9–35V DC</div><div class="foot"><span class="badge b-lim">كمية محدودة</span><svg width="18"><use href="#arrow"/></svg></div></div></a>
+    <a class="card" href="#"><div class="img"><svg><use href="#heat"/></svg></div><div class="body"><span class="chip">GST</span><h3>كاشف حرارة معنون</h3><div class="spec">Addressable · 58°C</div><div class="foot"><span class="badge b-req">حسب الطلب</span><svg width="18"><use href="#arrow"/></svg></div></div></a>
+    <a class="card" href="#"><div class="img"><svg><use href="#battery"/></svg></div><div class="body"><span class="chip">عام (صيني)</span><h3>بطارية جافة 12 فولت 7 أمبير</h3><div class="spec">12V · 7Ah</div><div class="foot"><span class="badge b-in">متوفر</span><svg width="18"><use href="#arrow"/></svg></div></div></a>
+  </div>
+</div></section>
+
+<section><div class="container">
+  <span class="eyebrow">لماذا نحن</span><h2>ما نقدمه فعلاً</h2><p class="lead" style="margin-block-end:40px">نصوص يحررها صاحب الشركة من لوحة التحكم — بدون أرقام مخترعة.</p>
+  <div class="why">
+    <div><h3>خبرة فنية</h3><p>فريق متخصص في تصميم وتوريد أنظمة الإنذار التقليدية والعنونة.</p></div>
+    <div><h3>ضمان معتمد</h3><p>جميع المنتجات بضمان الوكيل وشهادات مطابقة.</p></div>
+    <div><h3>دعم بعد البيع</h3><p>متابعة فنية واستشارات اختيار المعدات المناسبة لمشروعك.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="container">
+  <div class="sec-head"><div><span class="eyebrow">Design System</span><h2>المكونات الأساسية</h2></div></div>
+  <div class="ds">
+    <div class="box"><h4>الألوان</h4>
+      <div class="swatches">
+        <div><div class="sw" style="background:#0B1220"></div><span>#0B1220</span></div>
+        <div><div class="sw" style="background:#1B2640"></div><span>#1B2640</span></div>
+        <div><div class="sw" style="background:#4A5672"></div><span>#4A5672</span></div>
+        <div><div class="sw" style="background:#EEF1F6"></div><span>#EEF1F6</span></div>
+        <div><div class="sw" style="background:#D7261E"></div><span>#D7261E</span></div>
+        <div><div class="sw" style="background:#1FAF5A"></div><span>#1FAF5A</span></div>
+      </div></div>
+    <div class="box type"><h4>الخطوط — Cairo / Inter / Mono</h4>
+      <p style="font-size:34px;font-weight:800;line-height:1.2">عنوان رئيسي Display</p>
+      <p style="font-size:20px;font-weight:600">عنوان كارت H3 — Product title</p>
+      <p style="color:var(--muted)">نص أساسي بارتفاع سطر 1.7 لراحة القراءة بالعربي.</p>
+      <p class="ltr" style="font-size:14px">24V DC · 4 zones · 7Ah</p></div>
+    <div class="box"><h4>الأزرار</h4>
+      <div class="row"><button class="btn btn-primary">اطلب عرض سعر</button><button class="btn btn-secondary">تصفح</button><button class="btn btn-outline">إلغاء</button><button class="btn btn-wa"><svg><use href="#wa"/></svg>واتساب</button><button class="btn btn-outline"><svg><use href="#pdf"/></svg>كتالوج PDF</button></div>
+      <h4 style="margin-block-start:24px">حالة التوفر</h4>
+      <div class="row"><span class="badge b-in">متوفر</span><span class="badge b-lim">كمية محدودة</span><span class="badge b-req">حسب الطلب</span><span class="active-chip">GST ×</span></div></div>
+    <div class="box filter"><h4>البحث والفلاتر</h4>
+      <div class="input"><svg><use href="#search"/></svg>ابحث بالعربي أو English…</div>
+      <div style="margin-block-start:14px">
+        <label><input type="checkbox" checked>تقليدي<span class="n">24</span></label>
+        <label><input type="checkbox">معنون<span class="n">11</span></label>
+        <label><input type="checkbox">متوفر فقط<span class="n">30</span></label>
+      </div></div>
+    <div class="box" style="grid-column:1/-1"><h4>جدول المواصفات</h4>
+      <table class="specs"><tr><td>عدد الزونات</td><td>4</td></tr><tr><td>جهد التشغيل</td><td>24 V DC</td></tr><tr><td>نوع النظام</td><td>تقليدي</td></tr><tr><td>البطارية الاحتياطية</td><td>2 × 12V 7Ah</td></tr></table></div>
+  </div>
+</div></section>
+
+<section><div class="container">
+  <div class="cta"><div><h2>محتاج تختار النظام المناسب؟</h2><p>كلمنا وهنساعدك تحدد المعدات حسب مساحة ونوع منشأتك.</p></div>
+  <div class="row"><a class="btn btn-ghost-inv btn-lg" href="#"><svg><use href="#phone"/></svg><span class="ltr">0100 000 0000</span></a><a class="btn btn-wa btn-lg" href="#"><svg><use href="#wa"/></svg>واتساب</a></div></div>
+</div></section>
+
+<footer><div class="container">
+  <div class="cols">
+    <div><a class="logo" href="#" style="color:var(--inverse)"><span class="logo-mark" style="background:var(--navy-800)"></span>اسم الشركة</a><p style="margin-block-start:12px;font-size:14px;max-width:36ch">توريد أنظمة إنذار الحريق والكواشف والملحقات في مصر.</p></div>
+    <div><h5>روابط</h5><ul><li>المنتجات</li><li>من نحن</li><li>تواصل معنا</li></ul></div>
+    <div><h5>تواصل</h5><ul><li class="ltr">+20 100 000 0000</li><li class="ltr">+20 111 000 0000</li></ul></div>
+    <div><h5>العنوان</h5><ul><li>القاهرة، مصر</li><li>السبت – الخميس</li></ul></div>
+  </div>
+  <div class="bottom">© 2026 اسم الشركة — جميع الحقوق محفوظة</div>
+</div></footer>
+
+<a class="fab" href="#" aria-label="واتساب"><svg><use href="#wa"/></svg></a>
+</body>
+</html>
