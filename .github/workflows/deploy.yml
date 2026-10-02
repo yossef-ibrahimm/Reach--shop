@@ -3,7 +3,11 @@ name: Deploy Next.js to GitHub Pages
 on:
   push:
     branches: [ main ]
+  repository_dispatch:
+    types: [ content-updated ]
   workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * 0'
 
 permissions:
   contents: read
@@ -34,6 +38,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Validate Supabase build configuration
+        run: |
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "Missing NEXT_PUBLIC_SUPABASE_URL repository secret"; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" || { echo "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY repository secret"; exit 1; }
+          test -n "$NEXT_PUBLIC_SITE_URL" || { echo "Missing NEXT_PUBLIC_SITE_URL repository secret"; exit 1; }
 
       - name: Build static site
         run: npm run build
