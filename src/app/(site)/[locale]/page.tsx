@@ -61,12 +61,6 @@ export default async function HomePage() {
     </Link>
   );
 
-  const heroStats = [
-    { value: '15+', label: t('stats.experience') },
-    { value: '24/7', label: t('stats.support') },
-    { value: '500+', label: t('stats.solutions') },
-  ];
-
   return (
     <main id="main-content">
       {/* Hero */}
@@ -106,15 +100,6 @@ export default async function HomePage() {
                 </a>
               )}
             </div>
-
-            <ul className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
-              {heroStats.map((stat) => (
-                <li key={stat.label} className="rounded-xl border border-white/10 bg-white/5 px-3 py-3">
-                  <div className="text-xl font-black tracking-[-0.04em] text-white">{stat.value}</div>
-                  <div className="mt-1 text-xs text-slate-300">{stat.label}</div>
-                </li>
-              ))}
-            </ul>
           </div>
           <HeroPanel />
         </div>

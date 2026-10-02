@@ -31,7 +31,10 @@ Current phase: **5 — Deploy — in progress (2026-10-02)**. Owner approved def
 - Verified local Edge Function startup on Supabase CLI runtime 1.77.1: CORS preflight returned 200 and unauthenticated POST returned 401. `npm run lint` and `npm run typecheck` pass.
 - Hosted project linked and secured: migrations 0001–0004 applied/reconciled, seed loaded (17 categories, 8 brands, 7 spec definitions, 65 products, 2 placeholder contact numbers, 17 placeholder settings), all products left as drafts (0 public products), 29 RLS policies and 3 storage buckets verified. No rows were published without owner review.
 - GitHub Pages source is set to GitHub Actions, and repository secrets `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL` are present. The production build supports the intentional zero-published-products state by exporting a not-found fallback for the dynamic product route; it does not expose drafts.
-- Pending: deploy the Edge Function and set its private `GITHUB_TOKEN` / `GITHUB_REPO` secrets for the admin-triggered publishing button; commit and push the completed deployment configuration, then verify the Pages workflow and live URL. Admin account creation and disabling public signup remain dashboard setup steps.
+- Deployed: commit `55fa536` pushed to `main`; GitHub Actions run 4 built and deployed successfully. Live URL: `https://yossef-ibrahimm.github.io/Reach--shop/` (Arabic home verified in browser).
+- Production placeholders cleaned: deactivated the two demo phone numbers and three demo social URLs; cleared demo address/email/hours. Temporary site name set to Reach. Owner should add real contact/social/company content before launch promotion.
+- Remaining setup: create the production admin user and disable public signup; add Supabase Edge Function secrets `GITHUB_TOKEN` and `GITHUB_REPO`, then deploy `trigger-deploy`. Product seed remains 65 drafts and must be reviewed before publishing.
+- Follow-up correction: removed fabricated hero statistics and fake contact details; a separate Pages deployment is triggered by its push and must be verified before closure.
 
 ### 2026-10-01 — Phase 0: Scaffold ✅
 **Built**
