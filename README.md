@@ -4,7 +4,7 @@ Bilingual (Arabic default / English) catalog site for fire-alarm equipment.
 **Static export** (GitHub Pages) + **Supabase** backend (free tiers only).
 Source of truth for scope and rules: [`PROJECT_SPEC.md`](./PROJECT_SPEC.md).
 
-> Status: **Phase 2 — Public site — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+> Status: **Phase 3 — Admin core — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
 ## Requirements
 
@@ -64,6 +64,20 @@ generation; skips Studio/auth/storage HTTP services):
 ```bash
 npx supabase start --exclude=gotrue,realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 ```
+
+### Local admin user
+
+Create the local admin account once per machine, then keep it for future sessions.
+Open Supabase Studio at `http://127.0.0.1:56023`, go to **Authentication → Users → Add user**,
+and create `admin@local.test` with a password you choose. Then promote it in local Postgres:
+
+```powershell
+$dbContainer = docker ps --filter "name=supabase_db_" --format "{{.Names}}" | Select-Object -First 1
+docker exec $dbContainer psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "update auth.users set raw_app_meta_data = raw_app_meta_data || '{""role"":""admin""}'::jsonb where email = 'admin@local.test';"
+```
+
+Sign out and back in so the new JWT includes `app_metadata.role=admin`. Never put a
+service-role key in the repo or browser; security remains in Supabase RLS.
 
 ### RLS verification (Phase 1 DoD)
 

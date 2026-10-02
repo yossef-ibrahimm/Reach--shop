@@ -1,20 +1,20 @@
 # PROGRESS
 
-Current phase: **2 — Public site — DONE (2026-10-02)**, awaiting approval to start Phase 3.
+Current phase: **3 — Admin core — DONE (2026-10-02)**, awaiting approval to start Phase 4.
 
 ## Definition of done (every phase)
 - [x] `npm run build` succeeds as a static export
 - [x] No TypeScript / ESLint errors
 - [x] RTL and LTR both verified
 - [x] No secrets in the repo
-- [x] RLS verified (anon cannot write; anon cannot read drafts) — from Phase 1
-- [x] This file updated
+- [x] RLS verified end-to-end against a live local Supabase stack (admin login + REST + storage + SQL suite)
+- [x] This file updated after final verification
 
 ## Phases
 - [x] **0 Scaffold** — Next.js static export, TS strict, Tailwind (logical props), next-intl ar/en, fonts, site + admin layouts, lint/format, env, basePath, root redirect
 - [x] **1 Supabase** — migrations (schema + RLS + storage), type generation, seed.sql from Appendix A (drafts), README steps (project + admin user)
 - [x] **2 Public site** — layout/header/footer/WhatsApp, Home, Products listing (filters + search + URL state), Product page, About, Contact, 404
-- [ ] **3 Admin core** — login, guard, dashboard, products list, add/edit product, image + PDF pipeline, duplicate/delete/publish
+- [x] **3 Admin core** — login, guard, dashboard, products list, add/edit product, image + PDF pipeline, duplicate/delete/publish
 - [ ] **4 Admin extras** — categories, brands, series, specs, settings, certificates, projects
 - [ ] **5 Deploy** — Edge Function trigger-deploy, GitHub Actions, "Publish changes", weekly cron + external keep-alive, docs
 - [ ] **6 SEO & polish** — sitemap/robots/hreflang/JSON-LD/OG, a11y pass, perf pass (Lighthouse ≥ 90 mobile), empty/error states, final README
@@ -96,3 +96,29 @@ Current phase: **2 — Public site — DONE (2026-10-02)**, awaiting approval to
 - `npm run serve` route matrix re-run: `/ar/`+`/en/` (lang/dir correct), products listing/detail (both locales), about, contact, admin (noindex), query-string listing URL → 200; unknown path → HTTP 404; `wa.me` + `dir="ltr"` phones present; hero marker parsed; spec table present on `hst-economy-4-zone-panel`, absent on `hst-mcp`; certificates/projects sections hidden (0 rows).
 - `psql -f supabase/tests/rls_verify.sql` → **ALL RLS CHECKS PASSED**, fixtures restored (17/8/7/65, 2 phones, 3 socials, 17 settings, 0 images/certificates/projects).
 - Secret scan: no `service_role`/tokens in tracked files; `.env.local` git-ignored.
+
+### 2026-10-02 — Phase 3: Admin core ✅
+**Built**
+- `src/app/(admin)/admin/login/page.tsx` + `src/features/admin/auth/login-form.tsx`: admin login flow with email/password validation, role check via `app_metadata.role`, sign-out on non-admin session, redirect to `/admin/` for valid admins.
+- `src/app/(admin)/admin/(protected)/layout.tsx` + `src/features/admin/auth/admin-guard.tsx` + `src/features/admin/auth/admin-header.tsx`: protected admin shell, skip-link, role enforcement, header, logout and basePath-aware site link.
+- `src/app/(admin)/admin/(protected)/page.tsx`: dashboard with live count queries for products/drafts/missing translations/images; client-side data loading and shortcuts.
+- `src/features/admin/products/*`: shared add/edit form, product listing, image/PDF staging, duplicate/delete/publish flows, lookup loading, slug validation, category-change spec rebuild, partial-save error handling, and admin-only RLS enforcement.
+- `src/lib/supabase/browser.ts`: lazy Supabase client plus admin-claim helper to keep the browser safe and anon-only by default.
+- `src/messages/ar.json`: admin namespace with Arabic-only strings, plus shared `availability` / `system` labels used by the admin UI.
+
+**Verified**
+- `npm run format:check` → all matched files use Prettier formatting.
+- `npm run lint` → 0 problems.
+- `npm run typecheck` → 0 errors.
+- Local Supabase Auth health → HTTP 200; the required database, REST, Auth, Kong and Storage containers were healthy.
+- Admin password login → HTTP 200; decoded JWT claim `app_metadata.role=admin`; admin product read → HTTP 200.
+- Admin product insert / patch / delete → all passed. Anon insert → HTTP 401; anon patch/delete → HTTP 200 with `[]` for both and the product row unchanged; authenticated non-admin insert → HTTP 403.
+- Storage admin upload → HTTP 200; object removal → successful. Anonymous upload was denied by RLS (`statusCode=403`, `new row violates row-level security policy`).
+- `Get-Content supabase\tests\rls_verify.sql -Raw | docker exec -i supabase_db_Reach_website psql -U postgres -d postgres -v ON_ERROR_STOP=1` → **`ALL RLS CHECKS PASSED`**; fixtures restored.
+- `npm run build` → **147 static pages**. A temporary one-worker build setting was used to fit current machine memory and then reverted; the committed Next.js config is unchanged.
+- Browser verification on the local static export: valid admin login redirected to `/admin/`; clearing the session and opening `/admin/products/` redirected to `/admin/login/`; dashboard fetched 65 products / 65 published / 0 missing translations / 65 missing images; products list and new-product form rendered with category/brand lookups. Routes `/ar/`, `/en/`, `/ar/products/`, `/admin/login/`, `/admin/products/` returned HTTP 200 with expected RTL/LTR and titles.
+- `out/` secret scan → no `service_role` literal; any embedded Supabase JWT is anon-role only.
+
+**Decisions**: D-040…D-051 added (see `DECISIONS.md`).
+
+**Open questions**: D-006 (Appendix A rows 46/65 need owner confirmation) and D-005 (placeholder contact/certificate/social content remains for owner replacement in Phase 4). No Phase 3 verification blockers remain.

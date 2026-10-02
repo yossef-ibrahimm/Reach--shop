@@ -10,6 +10,7 @@ const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const basePath = rawBasePath.length > 1 ? rawBasePath.replace(/\/+$/, '') : '';
 
 const nextConfig: NextConfig = {
+  agentRules: false,
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
