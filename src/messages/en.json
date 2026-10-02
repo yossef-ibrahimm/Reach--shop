@@ -70,9 +70,10 @@
     "ctaTitle": "Not sure which system you need?",
     "ctaBody": "Talk to us and we will help you pick the right equipment for your building.",
     "stats": {
-      "experience": "Years of experience",
-      "support": "Technical support",
-      "solutions": "Completed solutions"
+      "products": "Published products",
+      "brands": "Brands",
+      "certificates": "Certificates",
+      "projects": "Projects"
     }
   },
   "products": {
@@ -110,6 +111,35 @@
     "title": "About us",
     "storyTitle": "Our story",
     "visionTitle": "Our vision",
+    "accreditation": {
+      "eyebrow": "Accreditation & Recognition",
+      "title": "Authorized HST Distributor, Recognized in 2024",
+      "lead": "Our HST accreditation is more than a certificate. It is a commitment to supplying fire alarm systems you can rely on, backed by technical support that continues after installation.",
+      "trust": {
+        "official": {
+          "title": "Official accreditation",
+          "body": "An authorized distributor certificate issued by HST for fire alarm systems."
+        },
+        "recognition": {
+          "title": "2024 recognition",
+          "body": "The company was honored among the top ten companies of 2024."
+        },
+        "support": {
+          "title": "After-sales support",
+          "body": "Continuous technical follow-up after supply and installation, at competitive prices."
+        }
+      },
+      "certificate": {
+        "caption": "HST authorized distributor certificate for fire alarm systems",
+        "alt": "HST authorized distributor certificate awarded to Reach Advanced Technology Solutions — 2024 award"
+      },
+      "ceremony": {
+        "caption": "Receiving the recognition certificate at the AI Applications Conference",
+        "alt": "Receiving the certificate on stage at the AI Applications Conference"
+      },
+      "zoomLabel": "View {name} full size",
+      "lightboxLabel": "Accreditation and recognition certificates"
+    },
     "certificatesTitle": "Certificates & accreditations",
     "brandsTitle": "Brands",
     "addressTitle": "Address",

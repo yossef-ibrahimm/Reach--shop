@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
+import { AccreditationSection } from '@/components/about/accreditation-section';
 import { CertificatesGrid } from '@/components/home/certificates-grid';
 import { ContactDetails } from '@/components/contact/contact-details';
 import { SectionHeading } from '@/components/ui/section-heading';
@@ -47,6 +48,8 @@ export default async function AboutPage() {
           </section>
         )}
       </div>
+
+      <AccreditationSection />
 
       {certificates.length > 0 && (
         <section className="mt-12">

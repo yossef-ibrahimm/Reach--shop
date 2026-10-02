@@ -21,6 +21,34 @@ Current phase: **5 — Deploy — in progress (2026-10-02)**. Owner approved def
 
 ## Log
 
+### 2026-10-03 — About page: Accreditation & Recognition section
+**Built**
+- New `AccreditationSection` (server) + `AccreditationGallery` (client) on the About page: two-column trust block (text + document visuals) that mirrors via logical properties and reorders to "visuals first" on mobile.
+- HST "Authorized Distributor Certificate" in a refined document frame (thin border, layered shadow, offset backing panel); the award-ceremony photo as a smaller overlapping card. Both open the shared `Lightbox` with captions, focus trap, focus restore to the trigger, Esc, scroll lock and an `aria-label`d close button.
+- Typed content config `src/lib/content/accreditations.ts` holding the two optimized WebP assets with intrinsic `width`/`height` (no layout shift); files live in `public/images/` so they honour `NEXT_PUBLIC_BASE_PATH`.
+- New AR/EN copy under `about.accreditation.*` (eyebrow, title, lead, 3 trust points, captions, alt text, zoom + lightbox labels). CTA row reuses `nav.contact` / `common.browseProducts` and existing routes — no phone numbers, no prices, no stock counts.
+- `SectionHeading` gained an optional `id` so the section can be labelled via `aria-labelledby`.
+- Scroll-in reveal added as a CSS utility (`reveal-up`): scroll-driven animation gated behind `@supports (animation-timeline: view())` **and** `prefers-reduced-motion: no-preference` — no JS, no hidden content when JS or the CSS feature is missing.
+- Shared `Lightbox` upgraded for all galleries: focus trap, focus restore, body scroll lock, optional `label`, optional `caption` rendered as `figcaption` and wired to the dialog via `aria-describedby`, and RTL-aware arrow-key direction.
+
+**Out-of-scope fix included**
+- `home.stats.*` in `src/messages/ar.json` / `en.json` still held the old demo keys (`experience` / `support` / `solutions`) while the home trust strip already requested `products` / `brands` / `certificates` / `projects`. Both locales logged `MISSING_MESSAGE` on the live home page (regression from commit `3989da3`). Fixed by adding the four real labels; this was required by the non-negotiable "every user-facing string in AR and EN" rule and by keeping the build error-free.
+
+**Verified**
+- `npm run lint` → 0 problems. `npm run typecheck` → 0 errors. `npm run format:check` → clean on every file touched by this task.
+- `npm run build` (static export, `NEXT_PUBLIC_BASE_PATH=/Reach--shop`) → all routes generated, **no `MISSING_MESSAGE` errors**. Note: the build needs `NODE_OPTIONS=--max-old-space-size=12288` on this machine — a known local memory limit, not a repo change.
+- Exported HTML: `/ar/about/` → `dir="rtl"` + full Arabic copy; `/en/about/` → `dir="ltr"` + full English copy. Both contain `<section aria-labelledby="accreditation-title">`, 2 `<figure>` + 2 `<figcaption>`, and image URLs prefixed `/Reach--shop/images/…`.
+- Built CSS contains `.reveal-up` only inside `@media (prefers-reduced-motion: no-preference)` + `@supports (animation-timeline: view())`; `@keyframes reveal-up` present.
+- Static server: `/ar/about/` + `/en/about/` → 200 with the section; both WebP files → 200 `image/webp`. (`scripts/serve.mjs` does not emulate basePath, so images were checked without the prefix — the files are correctly at `out/images/`.)
+- `out/` secret scan → no `service_role`; no JWT-looking strings in chunks.
+
+**Decisions**: D-058…D-064 added (see `DECISIONS.md`).
+
+**Open questions / owner confirmations**
+1. **Consent**: the people shown in `docs/source-assets/certificate-1.jpg` must confirm they consent to appearing on the public website before this is promoted.
+2. `object-[50%_35%]` on the ceremony photo is an unverified default — the agent could not view the source image, so the owner should confirm faces stay framed after the crop.
+3. `hst-authorized-distributor-certificate.webp` is 810×540 (the source is already smaller than the 1600px target); it is crisp in the card but may look soft in the lightbox on large displays. A higher-resolution scan can be dropped in later without a code change.
+
 ### 2026-10-02 — Approved phase-order exception
 - Owner explicitly approved deferring Phase 4 and moving directly to deployment. Phase 4 remains unchecked and must be completed later; this exception is logged rather than silently changing the spec's phase order.
 
