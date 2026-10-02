@@ -1,6 +1,6 @@
 {
   "meta": {
-    "siteName": "Company Name",
+    "siteName": "Reach",
     "title": "Fire Alarm Systems — Product Showcase",
     "description": "Showcase of fire alarm systems and accessories: control panels, smoke and heat detectors, sirens, batteries and cables.",
     "products": {
@@ -9,11 +9,11 @@
     },
     "about": {
       "title": "About us",
-      "description": "Learn about our experience supplying and supporting fire alarm systems, our certificates and brands."
+      "description": "Information about Reach, fire alarm systems and available products."
     },
     "contact": {
       "title": "Contact",
-      "description": "Phone numbers, email, address and working hours — plus direct WhatsApp contact."
+      "description": "Contact details for Reach."
     }
   },
   "nav": {
@@ -90,7 +90,7 @@
     "facetAvailability": "Availability",
     "facetSpecs": "Specifications",
     "emptyTitle": "No matching results",
-    "emptyBody": "Try adjusting the filters or searching another word — or just ask us on WhatsApp.",
+    "emptyBody": "There are no published products in the catalog yet.",
     "removeFilter": "Remove {name}",
     "showResults": "Show results",
     "filtersTitle": "Filter results"
@@ -118,7 +118,7 @@
   "contact": {
     "eyebrow": "Contact",
     "title": "Contact us",
-    "intro": "Pick whatever works for you — phone, WhatsApp or email.",
+    "intro": "Official contact details will be added soon.",
     "numbersTitle": "Phone numbers",
     "emailTitle": "Email",
     "addressTitle": "Address",

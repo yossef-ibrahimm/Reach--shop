@@ -101,48 +101,52 @@ export function SiteFooter({ site, locale }: Props) {
           </ul>
         </nav>
 
-        <div>
-          <h2 className="text-sm font-bold text-white">{t('footer.contactTitle')}</h2>
-          <ul className="mt-3 space-y-2 text-sm text-slate-400">
-            {site.phones.map((number) => (
-              <li key={number.id}>
-                <span className="block">{locale === 'en' ? number.label_en : number.label_ar}</span>
-                <a
-                  href={telLink(number.number)}
-                  dir="ltr"
-                  className="phone transition-colors hover:text-white"
-                >
-                  {number.number}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {site.phones.length > 0 && (
+          <div>
+            <h2 className="text-sm font-bold text-white">{t('footer.contactTitle')}</h2>
+            <ul className="mt-3 space-y-2 text-sm text-slate-400">
+              {site.phones.map((number) => (
+                <li key={number.id}>
+                  <span className="block">{locale === 'en' ? number.label_en : number.label_ar}</span>
+                  <a
+                    href={telLink(number.number)}
+                    dir="ltr"
+                    className="phone transition-colors hover:text-white"
+                  >
+                    {number.number}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        <div>
-          <h2 className="text-sm font-bold text-white">{t('footer.addressTitle')}</h2>
-          <ul className="mt-3 space-y-2 text-sm text-slate-400">
-            {address && (
-              <li className="flex items-start gap-2">
-                <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{address}</span>
-              </li>
-            )}
-            {hours && <li>{hours}</li>}
-            {mapUrl && (
-              <li>
-                <a
-                  href={mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-white"
-                >
-                  {t('common.mapLink')}
-                </a>
-              </li>
-            )}
-          </ul>
-        </div>
+        {(address || hours || mapUrl) && (
+          <div>
+            <h2 className="text-sm font-bold text-white">{t('footer.addressTitle')}</h2>
+            <ul className="mt-3 space-y-2 text-sm text-slate-400">
+              {address && (
+                <li className="flex items-start gap-2">
+                  <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{address}</span>
+                </li>
+              )}
+              {hours && <li>{hours}</li>}
+              {mapUrl && (
+                <li>
+                  <a
+                    href={mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-white"
+                  >
+                    {t('common.mapLink')}
+                  </a>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="border-navy-700 border-t">
