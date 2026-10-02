@@ -13,10 +13,16 @@ export function SectionHeading({ eyebrow, title, className, action, as: Heading 
   return (
     <div className={cn('flex flex-wrap items-end justify-between gap-4', className)}>
       <div>
-        {eyebrow && <p className="text-fire-600 text-sm font-bold">{eyebrow}</p>}
+        {eyebrow && (
+          <p className="text-fire-600 text-[11px] font-black tracking-[0.12em] uppercase">
+            {eyebrow}
+          </p>
+        )}
         <Heading
           className={
-            eyebrow ? 'mt-1 text-2xl font-bold lg:text-[28px]' : 'text-2xl font-bold lg:text-[28px]'
+            eyebrow
+              ? 'mt-2 text-2xl font-extrabold tracking-[-0.04em] lg:text-[32px]'
+              : 'text-2xl font-extrabold tracking-[-0.04em] lg:text-[32px]'
           }
         >
           {title}

@@ -54,12 +54,18 @@ export default async function HomePage() {
   const viewAllLink = (
     <Link
       href="/products/"
-      className="text-fire-700 hover:text-fire-600 inline-flex items-center gap-1.5 text-sm font-bold transition-colors"
+      className="text-fire-700 hover:text-fire-600 inline-flex items-center gap-1.5 rounded-full border border-fire-200 bg-fire-50 px-3 py-1.5 text-sm font-bold transition-colors"
     >
       {tc('viewAll')}
       <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
     </Link>
   );
+
+  const heroStats = [
+    { value: '15+', label: t('stats.experience') },
+    { value: '24/7', label: t('stats.support') },
+    { value: '500+', label: t('stats.solutions') },
+  ];
 
   return (
     <main id="main-content">
@@ -68,7 +74,7 @@ export default async function HomePage() {
         <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
           <div>
             {heroEyebrow && <p className="text-sm font-bold text-amber-500">{heroEyebrow}</p>}
-            <h1 className="mt-3 text-[34px] leading-tight font-extrabold lg:text-5xl">
+            <h1 className="mt-3 text-[34px] leading-tight font-extrabold tracking-[-0.04em] lg:text-5xl">
               {splitHighlight(heroTitle).map((part, index) =>
                 part.em ? (
                   <em key={index} className="text-fire-600 font-extrabold not-italic">
@@ -83,7 +89,7 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/products/"
-                className="bg-primary hover:bg-primary-hover inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
+                className="bg-primary hover:bg-primary-hover inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white shadow-md shadow-fire-600/20 transition-all hover:-translate-y-0.5"
               >
                 {tc('browseProducts')}
                 <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
@@ -93,13 +99,22 @@ export default async function HomePage() {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-whatsapp hover:bg-navy-950 inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
+                  className="bg-whatsapp hover:bg-[#0d6939] inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white shadow-md shadow-emerald-900/20 transition-all hover:-translate-y-0.5"
                 >
                   <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
                   {tc('askWa')}
                 </a>
               )}
             </div>
+
+            <ul className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
+              {heroStats.map((stat) => (
+                <li key={stat.label} className="rounded-xl border border-white/10 bg-white/5 px-3 py-3">
+                  <div className="text-xl font-black tracking-[-0.04em] text-white">{stat.value}</div>
+                  <div className="mt-1 text-xs text-slate-300">{stat.label}</div>
+                </li>
+              ))}
+            </ul>
           </div>
           <HeroPanel />
         </div>

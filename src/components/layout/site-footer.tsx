@@ -36,10 +36,31 @@ export function SiteFooter({ site, locale }: Props) {
 
   return (
     <footer className="bg-navy-950 text-inverse mt-16">
-      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-page py-12">
+        <div className="rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-lg shadow-navy-950/20 sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-fire-600 text-[11px] font-black tracking-[0.12em] uppercase">
+                {t('home.categoriesEyebrow')}
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-white">
+                {t('home.ctaTitle')}
+              </h2>
+            </div>
+            <Link
+              href="/contact/"
+              className="bg-primary hover:bg-primary-hover inline-flex h-12 items-center justify-center rounded-full px-5 text-sm font-bold text-white transition-colors"
+            >
+              {t('common.quote')}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="container-page grid gap-10 py-6 sm:grid-cols-2 lg:grid-cols-4 lg:pt-10">
         <div>
           <Link href="/" className="flex items-center gap-2.5" aria-label={companyName}>
-            <span className="bg-navy-800 text-fire-600 flex h-9 w-9 items-center justify-center rounded-md">
+            <span className="bg-navy-800 text-fire-600 flex h-9 w-9 items-center justify-center rounded-xl">
               <Flame aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <span className="text-lg font-extrabold">{companyName}</span>
@@ -56,7 +77,7 @@ export function SiteFooter({ site, locale }: Props) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.platform}
-                      className="border-navy-700 flex h-10 w-10 items-center justify-center rounded-md border transition-colors hover:border-white hover:bg-white/10"
+                      className="border-navy-700 flex h-10 w-10 items-center justify-center rounded-full border transition-colors hover:border-white hover:bg-white/10"
                     >
                       <Icon aria-hidden="true" className="h-4 w-4" />
                     </a>
@@ -68,7 +89,7 @@ export function SiteFooter({ site, locale }: Props) {
         </div>
 
         <nav aria-label={t('footer.linksTitle')}>
-          <h2 className="text-sm font-bold">{t('footer.linksTitle')}</h2>
+          <h2 className="text-sm font-bold text-white">{t('footer.linksTitle')}</h2>
           <ul className="mt-3 space-y-2 text-sm text-slate-400">
             {links.map((item) => (
               <li key={item.href}>
@@ -81,7 +102,7 @@ export function SiteFooter({ site, locale }: Props) {
         </nav>
 
         <div>
-          <h2 className="text-sm font-bold">{t('footer.contactTitle')}</h2>
+          <h2 className="text-sm font-bold text-white">{t('footer.contactTitle')}</h2>
           <ul className="mt-3 space-y-2 text-sm text-slate-400">
             {site.phones.map((number) => (
               <li key={number.id}>
@@ -99,7 +120,7 @@ export function SiteFooter({ site, locale }: Props) {
         </div>
 
         <div>
-          <h2 className="text-sm font-bold">{t('footer.addressTitle')}</h2>
+          <h2 className="text-sm font-bold text-white">{t('footer.addressTitle')}</h2>
           <ul className="mt-3 space-y-2 text-sm text-slate-400">
             {address && (
               <li className="flex items-start gap-2">

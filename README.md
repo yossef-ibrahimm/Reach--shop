@@ -171,3 +171,5 @@ GitHub Pages via GitHub Actions — implemented in **Phase 5** (spec §9).
 - [`docs/DESIGN.md`](./docs/DESIGN.md) — design system
 - [`docs/DECISIONS.md`](./docs/DECISIONS.md) — decision log
 - [`docs/PROGRESS.md`](./docs/PROGRESS.md) — phase checklist
+#   R e a c h - - s h o p  
+ 

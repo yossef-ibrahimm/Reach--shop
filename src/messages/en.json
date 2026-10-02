@@ -68,7 +68,12 @@
     "projectsEyebrow": "Our work",
     "projectsTitle": "Projects we are proud of",
     "ctaTitle": "Not sure which system you need?",
-    "ctaBody": "Talk to us and we will help you pick the right equipment for your building."
+    "ctaBody": "Talk to us and we will help you pick the right equipment for your building.",
+    "stats": {
+      "experience": "Years of experience",
+      "support": "Technical support",
+      "solutions": "Completed solutions"
+    }
   },
   "products": {
     "eyebrow": "Catalog",

@@ -3,6 +3,17 @@ import { supabaseBrowser } from '@/lib/supabase/browser';
 /** Bucket ids from migration 0004 (public read, admin-only write via RLS). */
 export const PRODUCT_IMAGES_BUCKET = 'product-images';
 export const CATALOGS_BUCKET = 'catalogs';
+export const SITE_ASSETS_BUCKET = 'site-assets';
+
+/** Uploads one staged WebP image and returns its storage path and public URL. */
+export async function uploadSiteAsset(blob: Blob, folder: string): Promise<{ path: string; url: string }> {
+  const path = `${folder}/${crypto.randomUUID()}.webp`;
+  const { error } = await supabaseBrowser()
+    .storage.from(SITE_ASSETS_BUCKET)
+    .upload(path, blob, { contentType: 'image/webp', upsert: false });
+  if (error) throw error;
+  return { path, url: publicUrl(SITE_ASSETS_BUCKET, path) };
+}
 
 /**
  * Thumbnail storage convention: the thumb lives next to the full image with a

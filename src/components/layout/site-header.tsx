@@ -47,14 +47,14 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
   return (
     <header className="sticky top-0 z-40">
       {(hours || phone) && (
-        <div className="bg-navy-950 text-inverse">
+        <div className="bg-navy-950 text-inverse shadow-[inset_0_-1px_0_rgba(255,255,255,0.08)]">
           <div className="container-page flex h-9 items-center justify-between gap-4 text-xs">
-            {hours && <span className="truncate">{hours}</span>}
+            {hours && <span className="truncate text-slate-300">{hours}</span>}
             {phone && (
               <a
                 href={telLink(phone)}
                 dir="ltr"
-                className="phone shrink-0 transition-colors hover:text-white"
+                className="phone shrink-0 font-bold text-slate-100 transition-colors hover:text-white"
               >
                 {phone}
               </a>
@@ -63,17 +63,17 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
         </div>
       )}
 
-      <div className="border-border bg-surface border-b">
-        <div className="container-page flex h-16 items-center gap-3 lg:h-[72px] lg:gap-6">
+      <div className="border-border bg-surface/95 border-b backdrop-blur-sm">
+        <div className="container-page flex h-16 items-center gap-3 lg:h-[76px] lg:gap-6">
           <Link
             href="/"
             className="group flex shrink-0 items-center gap-2.5"
             aria-label={companyName}
           >
-            <span className="bg-navy-900 text-fire-600 flex h-9 w-9 items-center justify-center rounded-md">
+            <span className="bg-navy-900 text-fire-600 flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-transform group-hover:scale-[1.03]">
               <Flame aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
             </span>
-            <span className="max-w-[42vw] truncate text-lg font-extrabold sm:max-w-none">
+            <span className="max-w-[42vw] truncate text-lg font-extrabold tracking-[-0.04em] sm:max-w-none">
               {companyName}
             </span>
           </Link>
@@ -87,10 +87,10 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
                     onClick={closeMenu}
                     aria-current={isActive(item.href) ? 'page' : undefined}
                     className={cn(
-                      'rounded-md px-3 py-2 text-sm font-semibold transition-colors',
+                      'rounded-full px-3.5 py-2 text-sm font-semibold transition-all',
                       isActive(item.href)
-                        ? 'bg-fire-50 text-fire-700'
-                        : 'text-muted hover:text-text hover:bg-surface-alt',
+                        ? 'bg-fire-50 text-fire-700 shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
                     )}
                   >
                     {item.label}
@@ -105,7 +105,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
               type="button"
               onClick={switchLocale}
               aria-label={t('switchLanguage')}
-              className="border-border hover:bg-surface-alt hidden h-10 items-center rounded-md border px-3 text-sm font-bold transition-colors sm:inline-flex"
+              className="border-border hover:bg-slate-100 hidden h-10 items-center rounded-full border px-3 text-sm font-bold text-slate-700 transition-colors sm:inline-flex"
             >
               {locale === 'ar' ? 'EN' : t('switchLanguage')}
             </button>
@@ -113,7 +113,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
             {phone && (
               <a
                 href={telLink(phone)}
-                className="border-border hover:bg-surface-alt hidden h-10 items-center gap-2 rounded-md border px-3 text-sm font-bold transition-colors md:inline-flex"
+                className="border-border hover:bg-slate-100 hidden h-10 items-center gap-2 rounded-full border px-3 text-sm font-bold text-slate-700 transition-colors md:inline-flex"
               >
                 <Phone aria-hidden="true" className="h-4 w-4" strokeWidth={1.75} />
                 <span className="phone" dir="ltr">
@@ -127,7 +127,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-whatsapp hover:bg-navy-950 inline-flex h-10 items-center gap-2 rounded-md px-3 text-sm font-bold text-white transition-colors sm:px-4"
+                className="bg-whatsapp hover:bg-[#0d6939] inline-flex h-10 items-center gap-2 rounded-full px-3 text-sm font-bold text-white shadow-md shadow-emerald-900/20 transition-all hover:-translate-y-0.5 sm:px-4"
               >
                 <FaWhatsapp aria-hidden="true" className="h-4 w-4" />
                 <span className="hidden sm:inline">{tc('whatsapp')}</span>
@@ -139,7 +139,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-label={menuOpen ? t('closeMenu') : t('menu')}
-              className="border-border hover:bg-surface-alt inline-flex h-10 w-10 items-center justify-center rounded-md border transition-colors lg:hidden"
+              className="border-border hover:bg-slate-100 inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors lg:hidden"
             >
               {menuOpen ? (
                 <X aria-hidden="true" className="h-5 w-5" />
@@ -151,7 +151,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
         </div>
 
         {menuOpen && (
-          <nav aria-label={t('menu')} className="border-border border-t lg:hidden">
+          <nav aria-label={t('menu')} className="border-border border-t bg-white lg:hidden">
             <ul className="container-page flex flex-col py-2">
               {navItems.map((item) => (
                 <li key={item.href}>
@@ -160,10 +160,10 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
                     onClick={closeMenu}
                     aria-current={isActive(item.href) ? 'page' : undefined}
                     className={cn(
-                      'block rounded-md px-3 py-3 font-semibold transition-colors',
+                      'block rounded-full px-3 py-3 font-semibold transition-colors',
                       isActive(item.href)
                         ? 'bg-fire-50 text-fire-700'
-                        : 'text-muted hover:bg-surface-alt',
+                        : 'text-slate-600 hover:bg-slate-100',
                     )}
                   >
                     {item.label}
@@ -177,7 +177,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
                     closeMenu();
                     switchLocale();
                   }}
-                  className="border-border hover:bg-surface-alt rounded-md border px-3 py-2 text-sm font-bold transition-colors"
+                  className="border-border hover:bg-slate-100 rounded-full border px-3 py-2 text-sm font-bold transition-colors"
                 >
                   {t('switchLanguage')}
                 </button>
