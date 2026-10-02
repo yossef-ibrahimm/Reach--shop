@@ -1,6 +1,6 @@
 # PROGRESS
 
-Current phase: **3 — Admin core — DONE (2026-10-02)**, awaiting approval to start Phase 4.
+Current phase: **5 — Deploy — in progress (2026-10-02)**. Owner approved deferring Phase 4 to deploy now; Phase 4 remains incomplete and is not represented as done.
 
 ## Definition of done (every phase)
 - [x] `npm run build` succeeds as a static export
@@ -16,10 +16,22 @@ Current phase: **3 — Admin core — DONE (2026-10-02)**, awaiting approval to 
 - [x] **2 Public site** — layout/header/footer/WhatsApp, Home, Products listing (filters + search + URL state), Product page, About, Contact, 404
 - [x] **3 Admin core** — login, guard, dashboard, products list, add/edit product, image + PDF pipeline, duplicate/delete/publish
 - [ ] **4 Admin extras** — categories, brands, series, specs, settings, certificates, projects
-- [ ] **5 Deploy** — Edge Function trigger-deploy, GitHub Actions, "Publish changes", weekly cron + external keep-alive, docs
+- [ ] **5 Deploy (in progress)** — Edge Function trigger-deploy, GitHub Actions, "Publish changes", weekly cron + external keep-alive, docs. Hosted deployment still requires configured GitHub secrets, Pages settings, and Supabase deployment credentials.
 - [ ] **6 SEO & polish** — sitemap/robots/hreflang/JSON-LD/OG, a11y pass, perf pass (Lighthouse ≥ 90 mobile), empty/error states, final README
 
 ## Log
+
+### 2026-10-02 — Approved phase-order exception
+- Owner explicitly approved deferring Phase 4 and moving directly to deployment. Phase 4 remains unchecked and must be completed later; this exception is logged rather than silently changing the spec's phase order.
+
+### 2026-10-02 — Phase 5 deployment preparation (in progress)
+- Added the `trigger-deploy` Edge Function with server-side Supabase Auth/JWT and `app_metadata.role=admin` verification, GitHub repository dispatch, CORS handling, and a best-effort per-isolate 60-second throttle. Function JWT verification is disabled at the gateway only because the handler validates the bearer token itself.
+- Added an Arabic admin-header “Publish changes” control with triggering/success/error states and a link to Actions; updated the Pages workflow to Node 24 and repository-name-derived `basePath`.
+- Documented hosted migrations, repository Actions secrets, GitHub Pages setup, the least-privilege GitHub token, Supabase function secrets, and external keep-alive.
+- Verified local Edge Function startup on Supabase CLI runtime 1.77.1: CORS preflight returned 200 and unauthenticated POST returned 401. `npm run lint` and `npm run typecheck` pass.
+- Hosted project linked and secured: migrations 0001–0004 applied/reconciled, seed loaded (17 categories, 8 brands, 7 spec definitions, 65 products, 2 placeholder contact numbers, 17 placeholder settings), all products left as drafts (0 public products), 29 RLS policies and 3 storage buckets verified. No rows were published without owner review.
+- GitHub Pages source is set to GitHub Actions, and repository secrets `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL` are present. The production build supports the intentional zero-published-products state by exporting a not-found fallback for the dynamic product route; it does not expose drafts.
+- Pending: deploy the Edge Function and set its private `GITHUB_TOKEN` / `GITHUB_REPO` secrets for the admin-triggered publishing button; commit and push the completed deployment configuration, then verify the Pages workflow and live URL. Admin account creation and disabling public signup remain dashboard setup steps.
 
 ### 2026-10-01 — Phase 0: Scaffold ✅
 **Built**

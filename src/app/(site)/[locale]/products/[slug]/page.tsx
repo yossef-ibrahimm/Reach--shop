@@ -26,7 +26,12 @@ type PageProps = {
 
 export async function generateStaticParams() {
   const products = await getAllProducts();
-  return products.map((product) => ({ slug: product.slug }));
+  // Static export requires at least one param for a dynamic route. If the owner
+  // has not published reviewed products yet, generate only a not-found fallback;
+  // the public query still exposes no drafts and the listing stays empty.
+  return products.length > 0
+    ? products.map((product) => ({ slug: product.slug }))
+    : [{ slug: '__no-published-products__' }];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { ExternalLink, LayoutDashboard, LogOut, Package } from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { basePath } from '@/lib/env';
+import { PublishChangesButton } from './publish-changes-button';
 
 /** Persistent chrome for authenticated admin pages: brand, nav, site link, logout. */
 export function AdminHeader() {
@@ -36,17 +37,32 @@ export function AdminHeader() {
             <Package aria-hidden="true" className={icon} />
             {t('meta.products')}
           </Link>
-          <Link href="/admin/categories/" className={navLink}>{t('meta.categories')}</Link>
-          <Link href="/admin/brands/" className={navLink}>{t('meta.brands')}</Link>
-          <Link href="/admin/series/" className={navLink}>{t('meta.series')}</Link>
-          <Link href="/admin/specs/" className={navLink}>{t('meta.specs')}</Link>
-          <Link href="/admin/settings/" className={navLink}>{t('meta.settings')}</Link>
-          <Link href="/admin/certificates/" className={navLink}>{t('meta.certificates')}</Link>
-          <Link href="/admin/projects/" className={navLink}>{t('meta.projects')}</Link>
+          <Link href="/admin/categories/" className={navLink}>
+            {t('meta.categories')}
+          </Link>
+          <Link href="/admin/brands/" className={navLink}>
+            {t('meta.brands')}
+          </Link>
+          <Link href="/admin/series/" className={navLink}>
+            {t('meta.series')}
+          </Link>
+          <Link href="/admin/specs/" className={navLink}>
+            {t('meta.specs')}
+          </Link>
+          <Link href="/admin/settings/" className={navLink}>
+            {t('meta.settings')}
+          </Link>
+          <Link href="/admin/certificates/" className={navLink}>
+            {t('meta.certificates')}
+          </Link>
+          <Link href="/admin/projects/" className={navLink}>
+            {t('meta.projects')}
+          </Link>
         </nav>
       </div>
 
       <div className="flex items-center gap-2">
+        <PublishChangesButton />
         <a
           href={`${basePath}/`}
           target="_blank"

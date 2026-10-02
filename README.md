@@ -4,7 +4,8 @@ Bilingual (Arabic default / English) catalog site for fire-alarm equipment.
 **Static export** (GitHub Pages) + **Supabase** backend (free tiers only).
 Source of truth for scope and rules: [`PROJECT_SPEC.md`](./PROJECT_SPEC.md).
 
-> Status: **Phase 3 — Admin core — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+> Status: **Phase 5 — deployment preparation in progress** (Phase 4 deferred by owner approval).
+> See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
 ## Requirements
 
@@ -163,7 +164,58 @@ supabase/
 
 ## Deploy
 
-GitHub Pages via GitHub Actions — implemented in **Phase 5** (spec §9).
+The GitHub Actions workflow builds a static export on pushes to `main`, manual dispatches,
+admin publish events, and a weekly schedule. The public site URL for this repository is
+`https://yossef-ibrahimm.github.io/Reach--shop/`.
+
+1. In the public GitHub repository, open **Settings → Pages** and set
+   **Build and deployment → Source** to **GitHub Actions**.
+2. Under **Settings → Secrets and variables → Actions**, add repository secrets:
+   - `NEXT_PUBLIC_SUPABASE_URL` — hosted Supabase Project URL.
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — the hosted project's public anon/publishable key only.
+   - `NEXT_PUBLIC_SITE_URL` — `https://yossef-ibrahimm.github.io/Reach--shop` (no trailing slash).
+3. Run **Actions → Deploy Next.js to GitHub Pages → Run workflow**. The workflow fails before
+   deployment if required settings are missing or Supabase cannot provide the build-time catalog.
+   Check the run logs, then visit the Pages URL above.
+
+### Hosted Supabase
+
+Use a Supabase project on the free plan. From the repository root, authenticate the CLI
+(`npx supabase login`), link the correct project (`npx supabase link --project-ref <project-ref>`),
+then apply migrations (`npx supabase db push`). Run `supabase/seed.sql` once in that project's SQL
+Editor. Do **not** run `db reset` against production: it would erase hosted data.
+
+In the Supabase Dashboard, disable public signups under **Authentication → Sign In / Providers**,
+create the single admin user, and set `app_metadata.role = 'admin'` using the SQL shown above.
+Sign out and back in after changing the claim. Add the hosted Project URL and public anon key to
+the GitHub repository secrets above; never use the service-role/secret key in the site or Actions.
+
+### Admin “Publish changes” button
+
+The `trigger-deploy` Edge Function validates the current Supabase session and the admin role, then
+sends a `content-updated` repository dispatch. Create a fine-grained GitHub token restricted to
+this repository with **Contents: read and write**, store it only in **Supabase Dashboard → Edge
+Functions → Secrets** as `GITHUB_TOKEN`, and set `GITHUB_REPO=yossef-ibrahimm/Reach--shop`.
+Deploy the function with
+`npx supabase functions deploy trigger-deploy --project-ref <project-ref> --no-verify-jwt`;
+the function performs its own server-side JWT and role validation. The token must never be put in
+the repository, browser, `.env*` files, or GitHub Pages secrets. Admin publishing is the supported
+way to rebuild after content changes; the public site is refreshed in about 1–3 minutes.
+
+### Keep-alive and scheduled builds
+
+The workflow rebuilds weekly (Sunday at 06:17 UTC), refreshing static content and helping keep
+the free Supabase project active. GitHub may disable scheduled workflows on public repositories
+after 60 days without repository activity, so add a secondary free monitor at a service such as
+Cron-job.org: schedule a weekly HTTPS `GET` to
+`<SUPABASE_URL>/rest/v1/categories?select=id&limit=1`, with an `apikey` header containing only
+the **public anon key**. This is a public read permitted by RLS; never use a service-role key for
+the ping. Check the workflow occasionally because schedules are best-effort and may be delayed.
+
+The publishing workflow is configured for this repository, but a successful first deployment
+requires the three GitHub Actions secrets and the GitHub Pages source setting above. Phase 4
+admin-extras remain deferred by explicit owner approval; this deployment does not imply those
+administration screens are complete.
 
 ## Docs
 
@@ -171,5 +223,6 @@ GitHub Pages via GitHub Actions — implemented in **Phase 5** (spec §9).
 - [`docs/DESIGN.md`](./docs/DESIGN.md) — design system
 - [`docs/DECISIONS.md`](./docs/DECISIONS.md) — decision log
 - [`docs/PROGRESS.md`](./docs/PROGRESS.md) — phase checklist
-#   R e a c h - - s h o p  
+#   R e a c h - - s h o p 
+ 
  
