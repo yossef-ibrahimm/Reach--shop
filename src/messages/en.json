@@ -2,14 +2,129 @@
   "meta": {
     "siteName": "Company Name",
     "title": "Fire Alarm Systems — Product Showcase",
-    "description": "Showcase of fire alarm systems and accessories: control panels, smoke and heat detectors, sirens, batteries and cables."
+    "description": "Showcase of fire alarm systems and accessories: control panels, smoke and heat detectors, sirens, batteries and cables.",
+    "products": {
+      "title": "Products",
+      "description": "Browse the full fire alarm catalog: control panels, detectors, sirens and accessories, with search and filters."
+    },
+    "about": {
+      "title": "About us",
+      "description": "Learn about our experience supplying and supporting fire alarm systems, our certificates and brands."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Phone numbers, email, address and working hours — plus direct WhatsApp contact."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About",
+    "contact": "Contact",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "العربية"
+  },
+  "common": {
+    "whatsapp": "WhatsApp",
+    "askWa": "Ask us on WhatsApp",
+    "browseProducts": "Browse products",
+    "viewAll": "View all",
+    "loadMore": "Load more",
+    "showing": "Showing {shown} of {total} products",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "applyFilters": "Apply",
+    "close": "Close",
+    "viewProduct": "View {name}",
+    "quote": "Ask for a quote",
+    "call": "Call",
+    "catalog": "Catalog PDF",
+    "mapLink": "View on map",
+    "waGreeting": "Hello, I have a question about your fire alarm systems and accessories.",
+    "skipToContent": "Skip to content",
+    "results": "{count, plural, one {# product} other {# products}}"
+  },
+  "availability": {
+    "in_stock": "In stock",
+    "limited": "Limited",
+    "on_request": "On request"
+  },
+  "system": {
+    "conventional": "Conventional",
+    "addressable": "Addressable"
   },
   "home": {
-    "heading": "Phase 0 — Scaffold",
-    "body": "Placeholder text to verify language and direction (LTR). It will be replaced by the home page content in Phase 2.",
-    "localeLabel": "Current language",
-    "switchLanguage": "العربية",
-    "adminLink": "Admin area"
+    "categoriesEyebrow": "Categories",
+    "categoriesTitle": "Browse by device type",
+    "featuredEyebrow": "Highlights",
+    "featuredTitle": "Featured products",
+    "brandsEyebrow": "Brands",
+    "brandsTitle": "Brands we work with",
+    "whyEyebrow": "Why us",
+    "whyTitle": "What we actually deliver",
+    "certificatesEyebrow": "Accreditation",
+    "certificatesTitle": "Certificates & compliance",
+    "projectsEyebrow": "Our work",
+    "projectsTitle": "Projects we are proud of",
+    "ctaTitle": "Not sure which system you need?",
+    "ctaBody": "Talk to us and we will help you pick the right equipment for your building."
+  },
+  "products": {
+    "eyebrow": "Catalog",
+    "title": "All products",
+    "intro": "Every system and accessory in one place — search or filter by category, brand and system type.",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Search in Arabic or English…",
+    "sortLabel": "Sort",
+    "sortFeatured": "Featured first",
+    "sortName": "Name A–Z",
+    "facetCategory": "Category",
+    "facetBrand": "Brand",
+    "facetSystem": "System type",
+    "facetAvailability": "Availability",
+    "facetSpecs": "Specifications",
+    "emptyTitle": "No matching results",
+    "emptyBody": "Try adjusting the filters or searching another word — or just ask us on WhatsApp.",
+    "removeFilter": "Remove {name}",
+    "showResults": "Show results",
+    "filtersTitle": "Filter results"
+  },
+  "product": {
+    "specsTitle": "Technical specifications",
+    "relatedTitle": "Related products",
+    "galleryLabel": "Product images",
+    "lightboxClose": "Close image",
+    "lightboxPrev": "Previous image",
+    "lightboxNext": "Next image",
+    "breadcrumbLabel": "Breadcrumb",
+    "quoteMessage": "Hello, I would like a price quote for this product: {name}"
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "About us",
+    "storyTitle": "Our story",
+    "visionTitle": "Our vision",
+    "certificatesTitle": "Certificates & accreditations",
+    "brandsTitle": "Brands",
+    "addressTitle": "Address",
+    "contactTitle": "Contact details"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Contact us",
+    "intro": "Pick whatever works for you — phone, WhatsApp or email.",
+    "numbersTitle": "Phone numbers",
+    "emailTitle": "Email",
+    "addressTitle": "Address",
+    "hoursTitle": "Working hours",
+    "socialsTitle": "Follow us"
+  },
+  "footer": {
+    "linksTitle": "Links",
+    "contactTitle": "Contact",
+    "addressTitle": "Address",
+    "rights": "© {year} {company} — All rights reserved"
   },
   "notFound": {
     "title": "Page not found",

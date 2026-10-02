@@ -4,7 +4,9 @@
 -- and need owner review (D-003). Availability follows the rule
 -- "غير متوفر قريباً = on_request, متوفر لفترة محدودة = limited, else in_stock" (D-004).
 -- The GST mockup brand was excluded (D-007).
--- Re-runnable: every insert uses "on conflict do nothing".
+-- Also seeds: 8 initial featured flags + placeholder site_settings / contact numbers /
+-- social links — obvious placeholders until edited in the admin (D-005, D-033).
+-- Re-runnable: inserts use "on conflict do nothing" or a "where not exists" guard.
 
 -- ── Categories (17) ──────────────────────────────────────────────────────
 insert into public.categories (slug, name_ar, name_en, sort_order) values
@@ -139,3 +141,66 @@ from s
 join public.categories c on c.slug = s.category
 left join public.brands b on b.slug = s.brand
 on conflict (slug) do nothing;
+
+-- ── Initial featured selection (8) — admin can change per product ────────
+update public.products set is_featured = true
+where slug in (
+  'hst-economy-4-zone-panel', 'hst-silver-8-zone-panel',
+  'hst-conventional-smoke-detector', 'hst-conventional-heat-detector',
+  'hst-addressable-smoke-detector', 'hst-mcp',
+  'hst-siren', 'battery-7ah'
+);
+
+-- ── Placeholder site content (D-005 / D-033) ─────────────────────────────
+-- All of this is placeholder copy until the owner edits it in the admin (Phase 4).
+-- Phone numbers are obviously fake; text is qualitative (no invented statistics).
+insert into public.site_settings (key, value_ar, value_en)
+select v.key, v.value_ar, v.value_en
+from (values
+  ('company_name', 'اسم الشركة', 'Company Name'),
+  ('tagline', 'توريد أنظمة إنذار الحريق والكواشف والملحقات في مصر.',
+             'Supply of fire alarm systems, detectors and accessories in Egypt.'),
+  ('hours', 'السبت – الخميس · 9 ص – 6 م', 'Saturday – Thursday · 9 am – 6 pm'),
+  ('address', 'القاهرة، مصر', 'Cairo, Egypt'),
+  ('email', 'info@example.com', 'info@example.com'),
+  ('map_url', 'https://www.google.com/maps/search/?api=1&query=Cairo%2C%20Egypt',
+              'https://www.google.com/maps/search/?api=1&query=Cairo%2C%20Egypt'),
+  ('hero_eyebrow', 'أنظمة إنذار ومكافحة الحريق', 'Fire alarm & suppression systems'),
+  ('hero_title', 'حماية تبدأ *بالإنذار المبكر* لكل منشأة في مصر',
+                 'Protection that starts with *early detection* for every facility'),
+  ('hero_lead', 'لوحات تحكم، كواشف دخان وحرارة، سارينات وملحقات — تقليدية وعنونة — مع دعم فني قبل وبعد التركيب.',
+                'Control panels, smoke and heat detectors, sirens and accessories — conventional and addressable — with technical support before and after installation.'),
+  ('about_story', 'نص مؤقت يُحرر من لوحة التحكم — نبذة عن الشركة وخبراتها في مجال أنظمة إنذار الحريق.',
+                  'Placeholder text edited from the admin — a short story about the company and its fire-alarm experience.'),
+  ('about_vision', 'نص مؤقت يُحرر من لوحة التحكم — رؤية الشركة وقيمها.',
+                   'Placeholder text edited from the admin — the company vision and values.'),
+  ('why_1_title', 'خبرة فنية', 'Technical experience'),
+  ('why_1_body', 'فريق متخصص في تصميم وتوريد أنظمة الإنذار التقليدية والعنونة.',
+                 'A specialist team for designing and supplying conventional and addressable alarm systems.'),
+  ('why_2_title', 'ضمان معتمد', 'Certified warranty'),
+  ('why_2_body', 'جميع المنتجات بضمان الوكيل وشهادات مطابقة.',
+                 'All products carry distributor warranty and compliance certificates.'),
+  ('why_3_title', 'دعم بعد البيع', 'After-sales support'),
+  ('why_3_body', 'متابعة فنية واستشارات اختيار المعدات المناسبة لمشروعك.',
+                 'Technical follow-up and advice on choosing the right equipment for your project.')
+) as v(key, value_ar, value_en)
+on conflict (key) do nothing;
+
+-- Placeholder contact numbers (obviously fake E.164 numbers, D-005).
+insert into public.contact_numbers (label_ar, label_en, number, is_whatsapp, sort_order)
+select v.label_ar, v.label_en, v.number, v.is_whatsapp, v.sort_order
+from (values
+  ('مبيعات', 'Sales', '+201000000000', true, 1),
+  ('دعم فني', 'Technical support', '+201111111111', false, 2)
+) as v(label_ar, label_en, number, is_whatsapp, sort_order)
+where not exists (select 1 from public.contact_numbers);
+
+-- Placeholder social links (obviously fake page URLs, D-005).
+insert into public.social_links (platform, url, sort_order)
+select v.platform, v.url, v.sort_order
+from (values
+  ('facebook', 'https://www.facebook.com/your-page', 1),
+  ('instagram', 'https://www.instagram.com/your-page', 2),
+  ('youtube', 'https://www.youtube.com/@your-channel', 3)
+) as v(platform, url, sort_order)
+where not exists (select 1 from public.social_links);

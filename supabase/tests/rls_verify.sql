@@ -6,6 +6,30 @@
 
 \set ON_ERROR_STOP on
 
+-- Self-heal: remove fixtures left behind by any previously aborted run.
+set storage.allow_delete_query to 'true';
+delete from storage.objects where name like 'rls-%';
+reset storage.allow_delete_query;
+delete from public.product_images where storage_path like 'rls-%';
+delete from public.products where slug like 'rls-%';
+delete from public.spec_definitions where key like 'rls\_%';
+delete from public.categories where slug like 'rls-%';
+delete from public.brands where slug like 'rls-%';
+delete from public.series where slug like 'rls-%';
+delete from public.certificates where title_ar like 'rls-%' or title_ar in ('shape-inactive', 'shape-active');
+delete from public.projects where title_ar like 'rls-%' or title_ar in ('shape-inactive', 'shape-active');
+delete from public.contact_numbers where label_ar like 'rls-%';
+delete from public.social_links where platform like 'rls-%';
+delete from public.site_settings where key like 'rls-%';
+
+-- The suite must work whether or not products are published locally (D-034).
+-- Force the designated test product into draft state and remember the original state.
+create temporary table _state as
+select (select is_published from public.products where slug = 'hst-fire-alarm-panel') as orig_published,
+       (select count(*) from public.products
+         where is_published and slug <> 'hst-fire-alarm-panel') as other_published;
+update public.products set is_published = false where slug = 'hst-fire-alarm-panel';
+
 -- ── helpers ──────────────────────────────────────────────────────────────
 -- A write "does not happen" if the statement errors OR affects 0 rows.
 create or replace function pg_temp.expect_no_write(stmt text, label text)
@@ -59,7 +83,6 @@ begin
   perform pg_temp.expect_count('select count(*) from public.brands', 8, 'seed: 8 brands');
   perform pg_temp.expect_count('select count(*) from public.spec_definitions', 7, 'seed: 7 spec definitions');
   perform pg_temp.expect_count('select count(*) from public.products', 65, 'seed: 65 products');
-  perform pg_temp.expect_count('select count(*) from public.products where is_published', 0, 'seed: all products are drafts');
 
   perform pg_temp.expect_count(
     $q$select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -79,14 +102,18 @@ end $$;
 
 -- ── 2. anon reads: drafts invisible, lookups visible ─────────────────────
 do $$
-declare n bigint;
+declare n bigint; baseline bigint;
 begin
+  select other_published into baseline from _state;
+
   set role anon;
   set request.jwt.claims to '{}';
 
   select count(*) into n from public.products;
-  if n <> 0 then raise exception 'FAIL: anon sees % products (want 0)', n; end if;
-  raise notice 'PASS: anon cannot read drafts (0 products)';
+  if n <> baseline then
+    raise exception 'FAIL: anon sees % products (want % = all published, draft hidden)', n, baseline;
+  end if;
+  raise notice 'PASS: anon cannot read drafts (% published visible, forced draft hidden)', baseline;
 
   perform pg_temp.expect_count('select count(*) from public.categories', 17, 'anon: sees 17 categories');
   perform pg_temp.expect_count('select count(*) from public.brands', 8, 'anon: sees 8 brands');
@@ -94,18 +121,23 @@ begin
   perform pg_temp.expect_count('select count(*) from public.product_images', 0, 'anon: 0 product images');
   perform pg_temp.expect_count('select count(*) from public.certificates', 0, 'anon: 0 certificates');
   perform pg_temp.expect_count('select count(*) from public.projects', 0, 'anon: 0 projects');
-  perform pg_temp.expect_count('select count(*) from public.site_settings', 0, 'anon: 0 site settings');
+  perform pg_temp.expect_count('select count(*) from public.site_settings', 17, 'anon: sees 17 site settings');
 
   reset role;
 end $$;
 
 -- published product becomes visible, then hidden again
 do $$
+declare baseline bigint;
 begin
+  select other_published into baseline from _state;
+
   update public.products set is_published = true where slug = 'hst-fire-alarm-panel';
 
   set role anon;
-  perform pg_temp.expect_count('select count(*) from public.products', 1, 'anon: sees exactly 1 published product');
+  perform pg_temp.expect_count(
+    'select count(*) from public.products', baseline + 1,
+    'anon: published product becomes visible');
   perform pg_temp.expect_count(
     $q$select count(*) from public.products where slug = 'hst-fire-alarm-panel'$q$,
     1, 'anon: published product readable');
@@ -118,7 +150,9 @@ begin
   update public.products set is_published = false where slug = 'hst-fire-alarm-panel';
 
   set role anon;
-  perform pg_temp.expect_count('select count(*) from public.products', 0, 'anon: hidden again after unpublish');
+  perform pg_temp.expect_count(
+    'select count(*) from public.products', baseline,
+    'anon: hidden again after unpublish');
   reset role;
 end $$;
 
@@ -289,12 +323,15 @@ end $$;
 
 -- ── 4. authenticated without admin claims = write denied, drafts hidden ──
 do $$
+declare baseline bigint;
 begin
+  select other_published into baseline from _state;
+
   set request.jwt.claims to '{}';
   set role authenticated;
 
-  perform pg_temp.expect_count('select count(*) from public.products', 0,
-    'authenticated (no admin): cannot read drafts');
+  perform pg_temp.expect_count('select count(*) from public.products', baseline,
+    'authenticated (no admin): sees published only, drafts hidden');
   perform pg_temp.expect_no_write(
     $q$insert into public.categories (slug, name_ar, name_en) values ('rls-auth','x','x')$q$,
     'authenticated (no admin) INSERT categories blocked');
@@ -420,17 +457,25 @@ begin
   delete from public.certificates where title_ar in ('shape-inactive','shape-active');
   delete from public.projects where title_ar in ('shape-inactive','shape-active');
 
+  -- restore the test product's original publish state (D-034)
+  update public.products p set is_published = s.orig_published
+  from _state s
+  where p.slug = 'hst-fire-alarm-panel';
+
   perform pg_temp.expect_count('select count(*) from public.categories', 17, 'final: 17 categories');
   perform pg_temp.expect_count('select count(*) from public.brands', 8, 'final: 8 brands');
   perform pg_temp.expect_count('select count(*) from public.spec_definitions', 7, 'final: 7 spec definitions');
   perform pg_temp.expect_count('select count(*) from public.products', 65, 'final: 65 products');
-  perform pg_temp.expect_count('select count(*) from public.products where is_published', 0, 'final: all drafts');
+  perform pg_temp.expect_count(
+    'select count(*) from public.products where is_published',
+    (select other_published + orig_published::int from _state),
+    'final: publish state restored');
   perform pg_temp.expect_count('select count(*) from public.series', 0, 'final: series empty');
   perform pg_temp.expect_count('select count(*) from public.product_images', 0, 'final: images empty');
   perform pg_temp.expect_count('select count(*) from public.certificates', 0, 'final: certificates empty');
-  perform pg_temp.expect_count('select count(*) from public.contact_numbers', 0, 'final: contact numbers empty');
-  perform pg_temp.expect_count('select count(*) from public.social_links', 0, 'final: social links empty');
-  perform pg_temp.expect_count('select count(*) from public.site_settings', 0, 'final: site settings empty');
+  perform pg_temp.expect_count('select count(*) from public.contact_numbers', 2, 'final: 2 contact numbers');
+  perform pg_temp.expect_count('select count(*) from public.social_links', 3, 'final: 3 social links');
+  perform pg_temp.expect_count('select count(*) from public.site_settings', 17, 'final: 17 site settings');
   perform pg_temp.expect_count('select count(*) from public.projects', 0, 'final: projects empty');
   perform pg_temp.expect_count(
     $q$select count(*) from storage.objects where bucket_id in ('site-assets','catalogs','product-images')$q$,

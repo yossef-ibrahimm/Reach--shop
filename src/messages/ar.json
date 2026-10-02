@@ -2,14 +2,129 @@
   "meta": {
     "siteName": "اسم الشركة",
     "title": "أنظمة إنذار الحريق — عرض المنتجات",
-    "description": "عرض لأنظمة إنذار الحريق وملحقاتها: لوحات تحكم، حساسات دخان وحرارة، سارينات وبطاريات وكابلات."
+    "description": "عرض لأنظمة إنذار الحريق وملحقاتها: لوحات تحكم، حساسات دخان وحرارة، سارينات وبطاريات وكابلات.",
+    "products": {
+      "title": "المنتجات",
+      "description": "تصفّح كل منتجات أنظمة إنذار الحريق: لوحات تحكم، كواشف، سارينات وملحقات مع البحث والفلاتر."
+    },
+    "about": {
+      "title": "من نحن",
+      "description": "تعرف على خبرتنا في توريد ودعم أنظمة إنذار الحريق، شهاداتنا وماركاتنا."
+    },
+    "contact": {
+      "title": "تواصل معنا",
+      "description": "أرقام الهاتف والبريد والعنوان ومواعيد العمل وتواصل مباشر عبر واتساب."
+    }
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "about": "من نحن",
+    "contact": "تواصل معنا",
+    "menu": "القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "switchLanguage": "English"
+  },
+  "common": {
+    "whatsapp": "واتساب",
+    "askWa": "اسألنا على واتساب",
+    "browseProducts": "تصفح المنتجات",
+    "viewAll": "عرض الكل",
+    "loadMore": "عرض المزيد",
+    "showing": "عرض {shown} من {total} منتج",
+    "filters": "الفلاتر",
+    "clearFilters": "مسح الفلاتر",
+    "applyFilters": "تطبيق",
+    "close": "إغلاق",
+    "viewProduct": "عرض {name}",
+    "quote": "اطلب عرض سعر",
+    "call": "اتصال",
+    "catalog": "كتالوج PDF",
+    "mapLink": "عرض على الخريطة",
+    "waGreeting": "مرحبًا، لدي استفسار عن أنظمة إنذار الحريق والملحقات.",
+    "skipToContent": "تخطي إلى المحتوى",
+    "results": "{count, plural, one {منتج واحد} two {منتجان} few {# منتجات} many {# منتج} other {# منتج}}"
+  },
+  "availability": {
+    "in_stock": "متوفر",
+    "limited": "كمية محدودة",
+    "on_request": "حسب الطلب"
+  },
+  "system": {
+    "conventional": "تقليدي",
+    "addressable": "معنون"
   },
   "home": {
-    "heading": "المرحلة ٠ — الهيكل الأساسي",
-    "body": "نص مؤقت للتحقق من اللغة والاتجاه (RTL). يُستبدل بمحتوى الصفحة الرئيسية في المرحلة ٢.",
-    "localeLabel": "اللغة الحالية",
-    "switchLanguage": "English",
-    "adminLink": "منطقة الإدارة"
+    "categoriesEyebrow": "الأقسام",
+    "categoriesTitle": "تصفح حسب نوع الجهاز",
+    "featuredEyebrow": "مختارات",
+    "featuredTitle": "منتجات مميزة",
+    "brandsEyebrow": "الماركات",
+    "brandsTitle": "ماركات نعمل معها",
+    "whyEyebrow": "لماذا نحن",
+    "whyTitle": "ما نقدمه فعلاً",
+    "certificatesEyebrow": "اعتمادات",
+    "certificatesTitle": "شهادات ومطابقات",
+    "projectsEyebrow": "أعمالنا",
+    "projectsTitle": "مشاريع نفخر بها",
+    "ctaTitle": "محتاج تختار النظام المناسب؟",
+    "ctaBody": "كلمنا وهنساعدك تحدد المعدات حسب مساحة ونوع منشأتك."
+  },
+  "products": {
+    "eyebrow": "الكتالوج",
+    "title": "كل المنتجات",
+    "intro": "كل الأنظمة والملحقات في مكان واحد — ابحث أو صفِّ حسب القسم والماركة ونوع النظام.",
+    "searchLabel": "بحث",
+    "searchPlaceholder": "ابحث بالعربي أو English…",
+    "sortLabel": "ترتيب",
+    "sortFeatured": "المميزة أولاً",
+    "sortName": "الاسم أبجدياً",
+    "facetCategory": "القسم",
+    "facetBrand": "الماركة",
+    "facetSystem": "نوع النظام",
+    "facetAvailability": "التوفر",
+    "facetSpecs": "المواصفات",
+    "emptyTitle": "لا توجد نتائج مطابقة",
+    "emptyBody": "جرّب تعديل الفلاتر أو ابحث بكلمة أخرى — أو اسألنا مباشرة على واتساب.",
+    "removeFilter": "إزالة {name}",
+    "showResults": "عرض النتائج",
+    "filtersTitle": "تصفية النتائج"
+  },
+  "product": {
+    "specsTitle": "المواصفات الفنية",
+    "relatedTitle": "منتجات ذات صلة",
+    "galleryLabel": "صور المنتج",
+    "lightboxClose": "إغلاق الصورة",
+    "lightboxPrev": "الصورة السابقة",
+    "lightboxNext": "الصورة التالية",
+    "breadcrumbLabel": "مسار التنقل",
+    "quoteMessage": "مرحبًا، أرغب في معرفة سعر/عرض سعر لمنتج: {name}"
+  },
+  "about": {
+    "eyebrow": "من نحن",
+    "title": "من نحن",
+    "storyTitle": "قصتنا",
+    "visionTitle": "رؤيتنا",
+    "certificatesTitle": "الشهادات والاعتمادات",
+    "brandsTitle": "الماركات",
+    "addressTitle": "العنوان",
+    "contactTitle": "بيانات التواصل"
+  },
+  "contact": {
+    "eyebrow": "تواصل معنا",
+    "title": "تواصل معنا",
+    "intro": "اختر الطريقة الأنسب لك — اتصال، واتساب أو بريد إلكتروني.",
+    "numbersTitle": "أرقام الهاتف",
+    "emailTitle": "البريد الإلكتروني",
+    "addressTitle": "العنوان",
+    "hoursTitle": "مواعيد العمل",
+    "socialsTitle": "تابعنا"
+  },
+  "footer": {
+    "linksTitle": "روابط",
+    "contactTitle": "تواصل",
+    "addressTitle": "العنوان",
+    "rights": "© {year} {company} — جميع الحقوق محفوظة"
   },
   "notFound": {
     "title": "الصفحة غير موجودة",

@@ -4,7 +4,7 @@ Bilingual (Arabic default / English) catalog site for fire-alarm equipment.
 **Static export** (GitHub Pages) + **Supabase** backend (free tiers only).
 Source of truth for scope and rules: [`PROJECT_SPEC.md`](./PROJECT_SPEC.md).
 
-> Status: **Phase 1 — Supabase — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+> Status: **Phase 2 — Public site — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
 ## Requirements
 
@@ -30,6 +30,9 @@ copy .env.example .env.local   # Windows (or: cp .env.example .env.local)
 | `npm run typecheck` | `tsc --noEmit`                         |
 | `npm run format`    | Prettier write                         |
 
+`npm run build` reads site content from Supabase **at build time** (D-029), so
+`.env.local` must point at a reachable instance (local stack or hosted) before building.
+
 ## Supabase
 
 Database schema lives in [`supabase/migrations/`](./supabase/migrations) (applied in filename order):
@@ -46,7 +49,7 @@ definitions and all 65 products from spec Appendix A, **as unpublished drafts**.
 
 ### Local development
 
-Requires Docker. Note: this project's `config.toml` uses ports **553xx** instead of
+Requires Docker. Note: this project's `config.toml` uses ports **560xx** instead of
 Supabase's default 543xx because Windows reserves 54321–54420 on this machine (see D-022).
 
 ```bash
@@ -68,7 +71,7 @@ After `db reset`, the suite asserts: anon cannot write **any** table, anon canno
 drafts, admin (JWT with `app_metadata.role='admin'`) can do everything:
 
 ```bash
-psql -v ON_ERROR_STOP=1 "postgresql://postgres:postgres@127.0.0.1:55322/postgres" < supabase/tests/rls_verify.sql
+psql -v ON_ERROR_STOP=1 "postgresql://postgres:postgres@127.0.0.1:56022/postgres" < supabase/tests/rls_verify.sql
 ```
 
 (PowerShell has no `<` input redirect — run it from cmd/Git Bash, or
@@ -132,16 +135,16 @@ src/
 │  ├─ (admin)/           admin area — Arabic RTL root layout, noindex
 │  ├─ (redirect)/        `/` → meta-refresh + JS redirect to /ar/
 │  └─ global-not-found.tsx  bilingual 404 (multiple root layouts)
-├─ components/
-├─ features/
-├─ lib/                  env, fonts, i18n (routing/request/navigation), helpers
-│  └─ supabase/database.types.ts   generated — never hand-edit
+├─ components/            layout · home · products · product · contact · ui (shared)
+├─ lib/                   env, fonts, i18n (routing/request/navigation), helpers
+│  ├─ products/           listing types, URL state, MiniSearch index
+│  └─ supabase/           server (build-time client), queries, database.types.ts (generated)
 └─ messages/{ar,en}.json
 supabase/
 ├─ migrations/           0001 functions · 0002 schema · 0003 rls · 0004 storage
 ├─ seed.sql              Appendix A — 65 products as unpublished drafts
 ├─ tests/rls_verify.sql  RLS DoD suite (run with psql, see above)
-└─ config.toml           local stack config (ports 553xx — see D-022)
+└─ config.toml           local stack config (ports 560xx — see D-022)
 ```
 
 ## Deploy

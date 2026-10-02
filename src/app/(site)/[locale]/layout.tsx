@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import { SiteHeader } from '@/components/layout/site-header';
+import { SiteFooter } from '@/components/layout/site-footer';
+import { FloatingWhatsApp } from '@/components/layout/floating-whatsapp';
 import { fontVariables } from '@/lib/fonts';
 import { routing } from '@/lib/i18n/routing';
+import { getSiteData, setting, whatsappNumber } from '@/lib/supabase/queries';
+import { waLink } from '@/lib/whatsapp';
 import '@/app/globals.css';
 
 export function generateStaticParams() {
@@ -34,11 +39,35 @@ export default async function SiteRootLayout({ children, params }: LayoutProps) 
   }
 
   const messages = await getMessages();
+  const site = await getSiteData();
+
+  const t = await getTranslations({ locale, namespace: 'common' });
+  const greeting = t('waGreeting');
+  const waNumber = whatsappNumber(site);
+  const whatsappUrl = waNumber ? waLink(waNumber, greeting) : null;
+  const primaryPhone = site.phones[0]?.number ?? null;
 
   return (
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} className={fontVariables}>
-      <body>
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+      <body className="flex min-h-screen flex-col">
+        <a
+          href="#main-content"
+          className="bg-primary sr-only z-50 rounded-md px-4 py-2 text-sm font-bold text-white focus:not-sr-only focus:absolute focus:start-4 focus:top-4"
+        >
+          {t('skipToContent')}
+        </a>
+        <NextIntlClientProvider messages={messages}>
+          <SiteHeader
+            locale={locale}
+            companyName={setting(site, 'company_name', locale)}
+            hours={setting(site, 'hours', locale)}
+            phone={primaryPhone}
+            whatsappUrl={whatsappUrl}
+          />
+          <div className="flex-1">{children}</div>
+          <SiteFooter site={site} locale={locale} />
+          {whatsappUrl && <FloatingWhatsApp href={whatsappUrl} label={t('whatsapp')} />}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

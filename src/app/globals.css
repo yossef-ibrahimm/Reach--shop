@@ -68,6 +68,22 @@
   font-weight: 500;
 }
 
+/* Page container — DESIGN.md §4 (1200px, 16/24/32 inline padding). */
+@utility container-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 16px;
+
+  @media (width >= 640px) {
+    padding-inline: 24px;
+  }
+
+  @media (width >= 1024px) {
+    padding-inline: 32px;
+  }
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
