@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Flame, Menu, Phone, X } from 'lucide-react';
+import { Menu, Phone, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
 import { telLink } from '@/lib/whatsapp';
 import { FaWhatsapp } from 'react-icons/fa6';
+import { SiteLogo } from '@/components/ui/site-logo';
 
 type Props = {
   locale: string;
@@ -70,9 +71,7 @@ export function SiteHeader({ locale, companyName, hours, phone, whatsappUrl }: P
             className="group flex shrink-0 items-center gap-2.5"
             aria-label={companyName}
           >
-            <span className="bg-navy-900 text-fire-600 flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-transform group-hover:scale-[1.03]">
-              <Flame aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
-            </span>
+            <SiteLogo alt="" height={40} priority className="transition-transform group-hover:scale-[1.03]" />
             <span className="max-w-[42vw] truncate text-lg font-extrabold tracking-[-0.04em] sm:max-w-none">
               {companyName}
             </span>

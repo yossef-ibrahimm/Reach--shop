@@ -1,4 +1,4 @@
-import { Flame, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/lib/i18n/navigation';
 import { FaFacebookF, FaInstagram, FaLink, FaYoutube } from 'react-icons/fa6';
@@ -6,6 +6,7 @@ import type { IconType } from 'react-icons';
 import type { SiteData } from '@/lib/supabase/queries';
 import { setting } from '@/lib/supabase/queries';
 import { telLink } from '@/lib/whatsapp';
+import { SiteLogo } from '@/components/ui/site-logo';
 
 const SOCIAL_ICONS: Record<string, IconType> = {
   facebook: FaFacebookF,
@@ -60,8 +61,8 @@ export function SiteFooter({ site, locale }: Props) {
       <div className="container-page grid gap-10 py-6 sm:grid-cols-2 lg:grid-cols-4 lg:pt-10">
         <div>
           <Link href="/" className="flex items-center gap-2.5" aria-label={companyName}>
-            <span className="bg-navy-800 text-fire-600 flex h-9 w-9 items-center justify-center rounded-xl">
-              <Flame aria-hidden="true" className="h-5 w-5" strokeWidth={1.75} />
+            <span className="flex shrink-0 items-center rounded-xl bg-white px-2 py-1.5">
+              <SiteLogo alt="" height={32} />
             </span>
             <span className="text-lg font-extrabold">{companyName}</span>
           </Link>
