@@ -45,11 +45,6 @@
     "skipToContent": "تخطي إلى المحتوى",
     "results": "{count, plural, one {منتج واحد} two {منتجان} few {# منتجات} many {# منتج} other {# منتج}}"
   },
-  "availability": {
-    "in_stock": "متوفر",
-    "limited": "كمية محدودة",
-    "on_request": "حسب الطلب"
-  },
   "system": {
     "conventional": "تقليدي",
     "addressable": "معنون"
@@ -88,7 +83,6 @@
     "facetCategory": "القسم",
     "facetBrand": "الماركة",
     "facetSystem": "نوع النظام",
-    "facetAvailability": "التوفر",
     "facetSpecs": "المواصفات",
     "emptyTitle": "لا توجد نتائج مطابقة",
     "emptyBody": "لا توجد منتجات منشورة في الكتالوج حاليًا.",
@@ -133,12 +127,8 @@
         "caption": "شهادة موزع معتمد من HST لأنظمة إنذار الحريق",
         "alt": "شهادة موزع معتمد من HST لشركة ريتش للحلول التكنولوجية المتقدمة — جائزة 2024"
       },
-      "ceremony": {
-        "caption": "لحظة تسلّم شهادة التكريم خلال مؤتمر تطبيقات الذكاء الاصطناعي",
-        "alt": "تسلّم شهادة التكريم على المسرح خلال مؤتمر تطبيقات الذكاء الاصطناعي"
-      },
       "zoomLabel": "عرض {name} بالحجم الكامل",
-      "lightboxLabel": "شهادات الاعتماد والتكريم"
+      "lightboxLabel": "شهادة الاعتماد والتكريم"
     },
     "certificatesTitle": "الشهادات والاعتمادات",
     "brandsTitle": "الماركات",
@@ -245,7 +235,6 @@
         "category": "التصنيف",
         "brand": "العلامة التجارية",
         "status": "الحالة",
-        "availability": "التوفر",
         "all": "الكل",
         "missingTranslations": "ناقصة الترجمة",
         "missingImages": "بلا صور",
@@ -262,7 +251,6 @@
         "name": "الاسم",
         "category": "التصنيف",
         "brand": "العلامة",
-        "availability": "التوفر",
         "status": "الحالة",
         "updated": "آخر تحديث",
         "actions": "إجراءات"
@@ -324,7 +312,6 @@
         "system": "نوع النظام",
         "keywords": "كلمات مفتاحية للبحث",
         "keywordsHint": "مرادفات إضافية تُستخدم في البحث، افصل بينها بمسافة.",
-        "availability": "حالة التوفر",
         "featured": "منتج مميز (يظهر في الرئيسية)",
         "published": "منشور على الموقع",
         "specs": "المواصفات",

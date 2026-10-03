@@ -157,7 +157,6 @@ export function ProductNotFoundBox() {
 
 function ProductFormInner({ mode, initial, lookups, reload }: InnerProps) {
   const t = useTranslations('admin.form');
-  const tAvailability = useTranslations('availability');
   const tSystem = useTranslations('system');
   const toast = useToast();
   const router = useRouter();
@@ -227,7 +226,6 @@ function ProductFormInner({ mode, initial, lookups, reload }: InnerProps) {
   const brandId = useWatch({ control, name: 'brand_id' });
   const seriesId = useWatch({ control, name: 'series_id' });
   const systemType = useWatch({ control, name: 'system_type' });
-  const availability = useWatch({ control, name: 'availability' });
   const specsValues = useWatch({ control, name: 'specs' });
 
   /* ------------------------------------------------------ slug auto-fill -- */
@@ -685,33 +683,15 @@ function ProductFormInner({ mode, initial, lookups, reload }: InnerProps) {
           {t('sections.publish')}
         </h2>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="field-availability" className={LABEL}>
-              {t('fields.availability')}
-            </label>
-            <select
-              id="field-availability"
-              className={INPUT}
-              value={availability}
-              {...register('availability')}
-            >
-              <option value="in_stock">{tAvailability('in_stock')}</option>
-              <option value="limited">{tAvailability('limited')}</option>
-              <option value="on_request">{tAvailability('on_request')}</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col justify-end gap-3 pb-1">
-            <label className="flex items-center gap-2 text-sm font-bold">
-              <input type="checkbox" className="size-4" {...register('is_featured')} />
-              {t('fields.featured')}
-            </label>
-            <label className="flex items-center gap-2 text-sm font-bold">
-              <input type="checkbox" className="size-4" {...register('is_published')} />
-              {t('fields.published')}
-            </label>
-          </div>
+        <div className="flex flex-col justify-end gap-3 pb-1">
+          <label className="flex items-center gap-2 text-sm font-bold">
+            <input type="checkbox" className="size-4" {...register('is_featured')} />
+            {t('fields.featured')}
+          </label>
+          <label className="flex items-center gap-2 text-sm font-bold">
+            <input type="checkbox" className="size-4" {...register('is_published')} />
+            {t('fields.published')}
+          </label>
         </div>
       </section>
 
@@ -795,7 +775,6 @@ function makeDefaults(
       series_id: '',
       system_type: '',
       search_keywords: '',
-      availability: 'in_stock',
       is_featured: false,
       is_published: false,
       specs: {},
@@ -814,7 +793,6 @@ function makeDefaults(
     series_id: product.series_id ?? '',
     system_type: product.system_type ?? '',
     search_keywords: product.search_keywords ?? '',
-    availability: product.availability as ProductFormValues['availability'],
     is_featured: product.is_featured,
     is_published: product.is_published,
     specs: specsToFormValues(product.specs, definitions),

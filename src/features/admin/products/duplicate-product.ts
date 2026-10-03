@@ -60,7 +60,6 @@ export async function duplicateProduct(
       description_ar: product.description_ar,
       description_en: product.description_en,
       specs: product.specs,
-      availability: product.availability,
       catalog_ar_url: null,
       catalog_en_url: null,
       search_keywords: product.search_keywords,

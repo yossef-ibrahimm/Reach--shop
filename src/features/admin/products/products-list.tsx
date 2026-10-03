@@ -19,7 +19,6 @@ import {
 import { cn } from '@/lib/cn';
 import { normalizeArabic } from '@/lib/products/search';
 import { supabaseBrowser } from '@/lib/supabase/browser';
-import { AvailabilityBadge } from '@/components/ui/availability-badge';
 import { useToast } from '@/features/admin/ui/toast';
 import { deleteProduct } from './delete-product';
 import { duplicateProduct } from './duplicate-product';
@@ -30,7 +29,6 @@ type AdminRow = {
   slug: string;
   name_ar: string;
   name_en: string;
-  availability: string;
   is_published: boolean;
   is_featured: boolean;
   updated_at: string;
@@ -52,7 +50,6 @@ type RowState = { status: 'loading' } | { status: 'error' } | { status: 'ready' 
 export function ProductsList() {
   const t = useTranslations('admin.products');
   const tDups = useTranslations('admin.duplicates');
-  const tAvailability = useTranslations('availability');
   const toast = useToast();
   const lookups = useLookups();
 
@@ -63,7 +60,6 @@ export function ProductsList() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [availabilityFilter, setAvailabilityFilter] = useState('all');
   const [missingTranslations, setMissingTranslations] = useState(false);
   const [missingImages, setMissingImages] = useState(false);
 
@@ -78,7 +74,7 @@ export function ProductsList() {
       supabase
         .from('products')
         .select(
-          'id, slug, name_ar, name_en, availability, is_published, is_featured, updated_at, category_id, brand_id',
+          'id, slug, name_ar, name_en, is_published, is_featured, updated_at, category_id, brand_id',
         )
         .order('updated_at', { ascending: false }),
       supabase.from('product_images').select('product_id, url, thumb_url, sort_order'),
@@ -118,7 +114,6 @@ export function ProductsList() {
           slug: product.slug,
           name_ar: product.name_ar,
           name_en: product.name_en,
-          availability: product.availability,
           is_published: product.is_published,
           is_featured: product.is_featured,
           updated_at: product.updated_at,
@@ -154,7 +149,6 @@ export function ProductsList() {
       if (brandFilter && row.brand_id !== brandFilter) return false;
       if (statusFilter === 'published' && !row.is_published) return false;
       if (statusFilter === 'draft' && row.is_published) return false;
-      if (availabilityFilter !== 'all' && row.availability !== availabilityFilter) return false;
       if (missingTranslations && row.name_ar.trim() !== '' && row.name_en.trim() !== '') {
         return false;
       }
@@ -167,7 +161,6 @@ export function ProductsList() {
     categoryFilter,
     brandFilter,
     statusFilter,
-    availabilityFilter,
     missingTranslations,
     missingImages,
   ]);
@@ -177,7 +170,6 @@ export function ProductsList() {
     categoryFilter !== '' ||
     brandFilter !== '' ||
     statusFilter !== 'all' ||
-    availabilityFilter !== 'all' ||
     missingTranslations ||
     missingImages;
 
@@ -186,7 +178,6 @@ export function ProductsList() {
     setCategoryFilter('');
     setBrandFilter('');
     setStatusFilter('all');
-    setAvailabilityFilter('all');
     setMissingTranslations(false);
     setMissingImages(false);
   };
@@ -368,20 +359,6 @@ export function ProductsList() {
               <option value="draft">{t('status.draft')}</option>
             </select>
           </label>
-
-          <label className="flex flex-col gap-1">
-            <span className={labelClass}>{t('filters.availability')}</span>
-            <select
-              value={availabilityFilter}
-              onChange={(event) => setAvailabilityFilter(event.target.value)}
-              className={selectClass}
-            >
-              <option value="all">{t('filters.all')}</option>
-              <option value="in_stock">{tAvailability('in_stock')}</option>
-              <option value="limited">{tAvailability('limited')}</option>
-              <option value="on_request">{tAvailability('on_request')}</option>
-            </select>
-          </label>
         </div>
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-bold">
@@ -520,9 +497,6 @@ export function ProductsList() {
                   {t('columns.brand')}
                 </th>
                 <th scope="col" className="p-3 text-start text-xs font-extrabold">
-                  {t('columns.availability')}
-                </th>
-                <th scope="col" className="p-3 text-start text-xs font-extrabold">
                   {t('columns.status')}
                 </th>
                 <th scope="col" className="p-3 text-start text-xs font-extrabold">
@@ -571,9 +545,6 @@ export function ProductsList() {
                     </td>
                     <td className="p-3 text-xs font-bold">{row.category_name ?? '—'}</td>
                     <td className="p-3 text-xs font-bold">{row.brand_name ?? '—'}</td>
-                    <td className="p-3">
-                      <AvailabilityBadge availability={row.availability} />
-                    </td>
                     <td className="p-3">
                       <span className="flex flex-wrap gap-1.5">
                         <span

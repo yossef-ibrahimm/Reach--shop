@@ -24,9 +24,8 @@ import { ProductCard } from '@/components/ui/product-card';
 
 const PAGE_SIZE = 24;
 const SYSTEM_VALUES = ['conventional', 'addressable'] as const;
-const AVAILABILITY_VALUES = ['in_stock', 'limited', 'on_request'] as const;
 
-type FacetKey = 'category' | 'brand' | 'system' | 'availability';
+type FacetKey = 'category' | 'brand' | 'system';
 type FacetOption = { value: string; label: string; count: number };
 type SpecGroup = { key: string; label: string; options: FacetOption[] };
 
@@ -38,8 +37,6 @@ function facetValue(product: ProductCardData, facet: FacetKey): string | null {
       return product.brand?.slug ?? null;
     case 'system':
       return product.system_type;
-    case 'availability':
-      return product.availability;
   }
 }
 
@@ -67,7 +64,6 @@ export function ProductsExplorer({
   const t = useTranslations('products');
   const tc = useTranslations('common');
   const tSystem = useTranslations('system');
-  const tAvailability = useTranslations('availability');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -134,9 +130,6 @@ export function ProductsExplorer({
       }
       if (state.system.length > 0 && skipFacet !== 'system') {
         if (!state.system.includes(product.system_type ?? '')) return false;
-      }
-      if (state.availability.length > 0 && skipFacet !== 'availability') {
-        if (!state.availability.includes(product.availability)) return false;
       }
 
       if (state.category.length === 1) {
@@ -218,11 +211,6 @@ export function ProductsExplorer({
       label: tSystem(value),
       count: countFacet('system', value),
     })).filter((option) => option.count > 0 || state.system.includes(option.value)),
-    availability: AVAILABILITY_VALUES.map((value) => ({
-      value,
-      label: tAvailability(value),
-      count: countFacet('availability', value),
-    })).filter((option) => option.count > 0 || state.availability.includes(option.value)),
   };
 
   const specGroups: SpecGroup[] = [];
@@ -286,9 +274,6 @@ export function ProductsExplorer({
       case 'system':
         applyState({ ...state, system: toggleValue(state.system, value) });
         break;
-      case 'availability':
-        applyState({ ...state, availability: toggleValue(state.availability, value) });
-        break;
     }
   };
 
@@ -305,7 +290,6 @@ export function ProductsExplorer({
       category: [],
       brand: [],
       system: [],
-      availability: [],
       specs: {},
     });
   };
@@ -349,17 +333,6 @@ export function ProductsExplorer({
         applyState({ ...state, system: state.system.filter((item) => item !== value) }),
     });
   }
-  for (const value of state.availability) {
-    chips.push({
-      id: `availability:${value}`,
-      label: tAvailability(value as (typeof AVAILABILITY_VALUES)[number]),
-      onRemove: () =>
-        applyState({
-          ...state,
-          availability: state.availability.filter((item) => item !== value),
-        }),
-    });
-  }
   if (specActive) {
     for (const [key, values] of Object.entries(state.specs)) {
       const group = specGroups.find((entry) => entry.key === key);
@@ -379,7 +352,6 @@ export function ProductsExplorer({
     state.category.length +
     state.brand.length +
     state.system.length +
-    state.availability.length +
     Object.values(state.specs).reduce((sum, values) => sum + values.length, 0);
 
   /* --------------------------------------------------------------- drawer -- */
@@ -634,12 +606,6 @@ function FiltersPanel({
         options={facetOptions.system}
         selected={state.system}
         onToggle={(value) => onFacet('system', value)}
-      />
-      <FacetGroup
-        legend={t('facetAvailability')}
-        options={facetOptions.availability}
-        selected={state.availability}
-        onToggle={(value) => onFacet('availability', value)}
       />
 
       {specGroups.map((group) => (

@@ -73,7 +73,7 @@ export function whatsappNumber(site: SiteData): string | null {
 
 const PRODUCT_SELECT = `
   id, slug, name_ar, name_en, description_ar, description_en,
-  availability, system_type, is_featured, sort_order, specs,
+  system_type, is_featured, sort_order, specs,
   search_keywords, catalog_ar_url, catalog_en_url,
   brand:brands(id, slug, name_ar, name_en),
   category:categories(id, slug, name_ar, name_en),
@@ -90,7 +90,6 @@ type ProductJoinRow = {
   name_en: string;
   description_ar: string | null;
   description_en: string | null;
-  availability: string;
   system_type: string | null;
   is_featured: boolean;
   sort_order: number;
@@ -124,7 +123,6 @@ function toCardProduct(row: ProductJoinRow): ProductCardData {
     name_en: row.name_en,
     description_ar: row.description_ar,
     description_en: row.description_en,
-    availability: row.availability,
     system_type: row.system_type,
     is_featured: row.is_featured,
     sort_order: row.sort_order,

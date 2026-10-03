@@ -6,7 +6,6 @@ import { Link } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
 import type { Json } from '@/lib/supabase/database.types';
 import type { ProductCardData, SpecDefinition } from '@/lib/products/types';
-import { AvailabilityBadge } from './availability-badge';
 import { categoryGlyph } from './category-icons';
 
 /**
@@ -96,8 +95,7 @@ export function ProductCard({ product, specDefs = [] }: Props) {
           {name}
         </h3>
         {line && <p className="phone truncate text-[11px] font-medium text-slate-600">{line}</p>}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-          <AvailabilityBadge availability={product.availability} />
+        <div className="mt-auto flex items-center justify-end gap-2 pt-2">
           <span className="bg-slate-100 text-slate-700 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors group-hover:bg-fire-50 group-hover:text-fire-600">
             <ArrowRight
               aria-hidden="true"

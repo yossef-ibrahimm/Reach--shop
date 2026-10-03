@@ -29,7 +29,6 @@ export type ProductPayload = {
   series_id: string | null;
   system_type: string | null;
   search_keywords: string | null;
-  availability: string;
   is_featured: boolean;
   is_published: boolean;
   specs: Record<string, string | number>;
@@ -85,7 +84,6 @@ export function toProductPayload(
     series_id: values.series_id === '' ? null : values.series_id,
     system_type: values.system_type === '' ? null : values.system_type,
     search_keywords: search_keywords === '' ? null : search_keywords,
-    availability: values.availability,
     is_featured: values.is_featured,
     is_published: values.is_published,
     specs,

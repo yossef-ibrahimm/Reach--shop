@@ -45,11 +45,6 @@
     "skipToContent": "Skip to content",
     "results": "{count, plural, one {# product} other {# products}}"
   },
-  "availability": {
-    "in_stock": "In stock",
-    "limited": "Limited",
-    "on_request": "On request"
-  },
   "system": {
     "conventional": "Conventional",
     "addressable": "Addressable"
@@ -88,7 +83,6 @@
     "facetCategory": "Category",
     "facetBrand": "Brand",
     "facetSystem": "System type",
-    "facetAvailability": "Availability",
     "facetSpecs": "Specifications",
     "emptyTitle": "No matching results",
     "emptyBody": "There are no published products in the catalog yet.",
@@ -133,12 +127,8 @@
         "caption": "HST authorized distributor certificate for fire alarm systems",
         "alt": "HST authorized distributor certificate awarded to Reach Advanced Technology Solutions — 2024 award"
       },
-      "ceremony": {
-        "caption": "Receiving the recognition certificate at the AI Applications Conference",
-        "alt": "Receiving the certificate on stage at the AI Applications Conference"
-      },
       "zoomLabel": "View {name} full size",
-      "lightboxLabel": "Accreditation and recognition certificates"
+      "lightboxLabel": "Accreditation certificate"
     },
     "certificatesTitle": "Certificates & accreditations",
     "brandsTitle": "Brands",

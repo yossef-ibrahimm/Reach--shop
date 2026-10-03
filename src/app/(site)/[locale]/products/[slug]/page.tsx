@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server';
 import { FileDown } from 'lucide-react';
 import { Breadcrumbs, type Crumb } from '@/components/ui/breadcrumbs';
 import { ProductCard } from '@/components/ui/product-card';
-import { AvailabilityBadge } from '@/components/ui/availability-badge';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { QuoteWhatsAppButton } from '@/components/product/quote-whatsapp-button';
 import { Link } from '@/lib/i18n/navigation';
@@ -183,10 +182,6 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
 
           <h1 className="mt-3 text-3xl leading-tight font-bold lg:text-4xl">{name}</h1>
-
-          <div className="mt-4">
-            <AvailabilityBadge availability={product.availability} />
-          </div>
 
           {description && <p className="text-muted mt-4 text-base">{description}</p>}
 

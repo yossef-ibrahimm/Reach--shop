@@ -20,7 +20,6 @@ export type ProductFormValues = {
   series_id: string;
   system_type: string;
   search_keywords: string;
-  availability: 'in_stock' | 'limited' | 'on_request';
   is_featured: boolean;
   is_published: boolean;
   specs: Record<string, string>;

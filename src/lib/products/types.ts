@@ -27,7 +27,6 @@ export type ProductCardData = {
   name_en: string;
   description_ar: string | null;
   description_en: string | null;
-  availability: string;
   system_type: string | null;
   is_featured: boolean;
   sort_order: number;

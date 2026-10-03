@@ -1,8 +1,9 @@
 /**
  * Listing URL state (D-030): `q`, `sort`, comma-joined multi-facets
- * (`category`, `brand`, `system`, `availability`) and dynamic spec facets
- * (`spec_<key>`). Page/load-more count is intentionally NOT in the URL —
- * it resets whenever the filter state changes.
+ * (`category`, `brand`, `system`) and dynamic spec facets (`spec_<key>`).
+ * Page/load-more count is intentionally NOT in the URL — it resets whenever
+ * the filter state changes. The `availability` facet was removed on owner
+ * request (D-065); legacy `availability` query params are ignored.
  */
 
 export type SortKey = 'featured' | 'name';
@@ -13,7 +14,6 @@ export type ListingState = {
   category: string[];
   brand: string[];
   system: string[];
-  availability: string[];
   specs: Record<string, string[]>;
 };
 
@@ -27,7 +27,6 @@ export function emptyListingState(): ListingState {
     category: [],
     brand: [],
     system: [],
-    availability: [],
     specs: {},
   };
 }
@@ -59,7 +58,6 @@ export function parseListingState(params: URLSearchParams): ListingState {
     category: splitList(params.get('category')),
     brand: splitList(params.get('brand')),
     system: splitList(params.get('system')),
-    availability: splitList(params.get('availability')),
     specs,
   };
 }
@@ -71,9 +69,6 @@ export function serializeListingState(state: ListingState): string {
   if (state.category.length > 0) params.set('category', state.category.join(','));
   if (state.brand.length > 0) params.set('brand', state.brand.join(','));
   if (state.system.length > 0) params.set('system', state.system.join(','));
-  if (state.availability.length > 0) {
-    params.set('availability', state.availability.join(','));
-  }
   for (const key of Object.keys(state.specs).sort()) {
     const values = state.specs[key];
     if (values.length > 0) params.set(`${SPEC_PREFIX}${key}`, values.join(','));
@@ -88,7 +83,6 @@ export function hasActiveFilters(state: ListingState): boolean {
     state.category.length > 0 ||
     state.brand.length > 0 ||
     state.system.length > 0 ||
-    state.availability.length > 0 ||
     Object.values(state.specs).some((values) => values.length > 0)
   );
 }

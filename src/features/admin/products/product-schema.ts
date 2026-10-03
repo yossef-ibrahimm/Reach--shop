@@ -65,7 +65,6 @@ export function buildProductSchema(
       series_id: z.string(),
       system_type: z.string(),
       search_keywords: z.string(),
-      availability: z.enum(['in_stock', 'limited', 'on_request']),
       is_featured: z.boolean(),
       is_published: z.boolean(),
       specs: z.record(z.string(), z.string()),
