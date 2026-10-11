@@ -12,37 +12,24 @@ type Props = {
   locale: string;
   companyName: string;
   hours: string;
+  phones: { id: string; label: string; number: string }[];
+  whatsappNumbers: string[];
   whatsappMessage: string;
 };
-
-/**
- * Single source of truth for contact numbers.
- * - `id` is the key inside the "phones" translation namespace.
- * - `whatsapp` decides whether this number takes part in the WhatsApp rotation.
- */
-const PHONE_ITEMS = [
-  { id: 'sales', phone: '0599999999', whatsapp: true },
-  { id: 'support', phone: '0588888888', whatsapp: true },
-  { id: 'general', phone: '0577777777', whatsapp: false },
-] as const;
-
-/** 01012345678 -> 201012345678 (international format required by wa.me). */
-const toWaNumber = (phone: string) => {
-  const digits = phone.replace(/\D/g, '');
-  return digits.startsWith('0') ? `20${digits.slice(1)}` : digits;
-};
-
-const WHATSAPP_NUMBERS = PHONE_ITEMS.filter((item) => item.whatsapp).map((item) =>
-  toWaNumber(item.phone),
-);
 
 const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fire-600';
 
-export function SiteHeader({ locale, companyName, hours, whatsappMessage }: Props) {
+export function SiteHeader({
+  locale,
+  companyName,
+  hours,
+  phones,
+  whatsappNumbers,
+  whatsappMessage,
+}: Props) {
   const t = useTranslations('nav');
   const tc = useTranslations('common');
-  const tp = useTranslations('phones');
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,11 +38,11 @@ export function SiteHeader({ locale, companyName, hours, whatsappMessage }: Prop
 
   // The first number is rendered on the server; the random one is picked after
   // mount so server and client HTML match (no hydration mismatch).
-  const [waNumber, setWaNumber] = useState<string | undefined>(WHATSAPP_NUMBERS[0]);
+  const [waNumber, setWaNumber] = useState<string | undefined>(whatsappNumbers[0]);
   useEffect(() => {
-    if (WHATSAPP_NUMBERS.length === 0) return;
-    setWaNumber(WHATSAPP_NUMBERS[Math.floor(Math.random() * WHATSAPP_NUMBERS.length)]);
-  }, []);
+    if (whatsappNumbers.length === 0) return;
+    setWaNumber(whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)]);
+  }, [whatsappNumbers]);
 
   const cleanPath = pathname.replace(/\/+$/, '') || '/';
 
@@ -104,10 +91,7 @@ export function SiteHeader({ locale, companyName, hours, whatsappMessage }: Prop
     router.push(`${cleanPath}${query}`, { locale: locale === 'ar' ? 'en' : 'ar' });
   };
 
-  // Both conditions now depend on the same data that is actually rendered.
-  const hasPhones = PHONE_ITEMS.length > 0;
-  const hasWhatsapp = Boolean(waNumber);
-  const hasContacts = hasPhones || hasWhatsapp;
+  const hasContacts = phones.length > 0;
   const hasTopBar = Boolean(hours) || hasContacts;
 
   return (
@@ -124,11 +108,11 @@ export function SiteHeader({ locale, companyName, hours, whatsappMessage }: Prop
 
             {hasContacts && (
               <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                {PHONE_ITEMS.map((item) => (
-                  <li key={item.id} className="flex items-center gap-1.5">
-                    <span className="text-slate-400">{tp(item.id)}:</span>
+                {phones.map((phone) => (
+                  <li key={phone.id} className="flex items-center gap-1.5">
+                    <span className="text-slate-400">{phone.label}:</span>
                     <a
-                      href={telLink(item.phone)}
+                      href={telLink(phone.number)}
                       dir="ltr"
                       className={cn(
                         'phone inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
@@ -137,12 +121,12 @@ export function SiteHeader({ locale, companyName, hours, whatsappMessage }: Prop
                       )}
                     >
                       <Phone aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.75} />
-                      {item.phone}
+                      {phone.number}
                     </a>
                   </li>
                 ))}
 
-                {waNumber && (
+                {waNumber && whatsappNumbers.length > 0 && (
                   <li>
                     <a
                       href={waLink(waNumber, whatsappMessage)}
