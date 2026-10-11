@@ -187,3 +187,18 @@ Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent
 - Official API documentation checked; installed versions remain Next.js 16.3.8, next-intl 4.14.8, Tailwind CSS 4.3.3 and supabase-js 2.117.2 (D-060).
 
 **Decision**: D-060. Static HTML/no-JavaScript uses the first active number; each hydrated phone location switches to its own random selection.
+
+### 2026-10-11 — Contractor request inbox
+**Built**
+- Added `contractor_requests` with database field/enum checks, timestamp ordering index, and RLS. Visitors may submit only; public reads/updates/deletes are denied. Admins can view and delete submissions.
+- Updated the bilingual contractor form to save the request before opening WhatsApp. Submission errors are shown and do not open WhatsApp. Optional drawing uploads remain manual; only the filename is retained.
+- Added the protected `/admin/requests/` inbox with newest-first records, search, 50-row paging, phone call links, and confirmed deletion. Linked the inbox from the admin header and dashboard.
+- Updated the project specification, README, and bilingual form/admin copy.
+
+**Verified**
+- `npm run lint`, `npm run typecheck`, targeted Prettier check, and `git diff --check` pass.
+- `npm run build` compiles and completes TypeScript, then fails while collecting product page data because the configured Supabase endpoint is unreachable.
+- Supabase migration/RLS SQL execution and static export/browser verification remain blocked by the unavailable Docker Desktop local database; hosted DB migration has not been applied.
+- Supabase generated types currently include the new table shape but need regeneration against the migration once the local Supabase stack is available.
+
+**Decision**: D-061. The owner approved the narrowly scoped anon INSERT-only RLS exception for project requests; requests remain private and admin-managed.

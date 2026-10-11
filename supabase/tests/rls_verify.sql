@@ -19,6 +19,7 @@ delete from public.series where slug like 'rls-%';
 delete from public.certificates where title_ar like 'rls-%' or title_ar in ('shape-inactive', 'shape-active');
 delete from public.projects where title_ar like 'rls-%' or title_ar in ('shape-inactive', 'shape-active');
 delete from public.contact_numbers where label_ar like 'rls-%';
+delete from public.contractor_requests where name like 'rls-%';
 delete from public.social_links where platform like 'rls-%';
 delete from public.site_settings where key like 'rls-%';
 
@@ -88,12 +89,12 @@ begin
     $q$select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
        where n.nspname = 'public' and c.relrowsecurity
          and c.relname in ('categories','brands','series','spec_definitions','products',
-                           'product_images','certificates','contact_numbers','social_links',
-                           'site_settings','projects')$q$,
-    11, 'RLS enabled on all 11 tables');
+                           'product_images','certificates','contact_numbers','contractor_requests',
+                           'social_links','site_settings','projects')$q$,
+    12, 'RLS enabled on all 12 tables');
   perform pg_temp.expect_count(
     $q$select count(*) from pg_policies where schemaname = 'public'$q$,
-    29, '29 policies on public tables');
+    31, '31 policies on public tables');
   perform pg_temp.expect_count(
     $q$select count(*) from pg_policies where schemaname = 'storage'
        and policyname in ('storage_objects_public_read','storage_objects_admin_write')$q$,
@@ -121,6 +122,8 @@ begin
   perform pg_temp.expect_count('select count(*) from public.product_images', 0, 'anon: 0 product images');
   perform pg_temp.expect_count('select count(*) from public.certificates', 0, 'anon: 0 certificates');
   perform pg_temp.expect_count('select count(*) from public.projects', 0, 'anon: 0 projects');
+  perform pg_temp.expect_count('select count(*) from public.contractor_requests', 0,
+    'anon: cannot read submitted contractor requests');
   perform pg_temp.expect_count('select count(*) from public.site_settings', 17, 'anon: sees 17 site settings');
 
   reset role;
@@ -170,7 +173,7 @@ begin
   reset role;
 end $$;
 
--- ── 3. anon cannot write (11 tables + storage) ───────────────────────────
+-- ── 3. anon can submit requests but cannot read or change them ────────────
 do $$
 declare
   v_cat uuid;
@@ -199,6 +202,22 @@ begin
 
   set role anon;
   set request.jwt.claims to '{}';
+
+  perform pg_temp.expect_write(
+    $q$insert into public.contractor_requests
+       (name, company, phone, project, building_type, area, system, tier)
+       values ('rls-public-submission','rls company','+201000000099','rls project',
+               'commercial', 100, 'conventional', 'open')$q$,
+    'anon INSERT contractor request allowed');
+  perform pg_temp.expect_count(
+    $q$select count(*) from public.contractor_requests where name = 'rls-public-submission'$q$,
+    0, 'anon cannot read submitted contractor request');
+  perform pg_temp.expect_no_write(
+    $q$update public.contractor_requests set company = 'HACKED' where name = 'rls-public-submission'$q$,
+    'anon UPDATE contractor requests blocked');
+  perform pg_temp.expect_no_write(
+    $q$delete from public.contractor_requests where name = 'rls-public-submission'$q$,
+    'anon DELETE contractor requests blocked');
 
   perform pg_temp.expect_no_write(
     $q$insert into public.categories (slug, name_ar, name_en) values ('rls-anon','x','x')$q$,
@@ -336,6 +355,12 @@ begin
     $q$insert into public.categories (slug, name_ar, name_en) values ('rls-auth','x','x')$q$,
     'authenticated (no admin) INSERT categories blocked');
   perform pg_temp.expect_no_write(
+    $q$insert into public.contractor_requests
+       (name, company, phone, project, building_type, area, system, tier)
+       values ('rls-auth-request','rls company','+201000000098','rls project',
+               'commercial', 100, 'conventional', 'open')$q$,
+    'authenticated (no admin) INSERT contractor requests blocked');
+  perform pg_temp.expect_no_write(
     $q$update public.categories set name_ar = 'HACKED' where slug = 'rls-fixture'$q$,
     'authenticated (no admin) UPDATE categories blocked');
 
@@ -350,6 +375,9 @@ begin
 
   perform pg_temp.expect_count('select count(*) from public.products', 66,
     'admin: reads all drafts (65 seed + 1 fixture)');
+  perform pg_temp.expect_count(
+    $q$select count(*) from public.contractor_requests where name = 'rls-public-submission'$q$,
+    1, 'admin can read public contractor submissions');
 
   perform pg_temp.expect_write(
     $q$insert into public.categories (slug, name_ar, name_en) values ('rls-admin','x','x')$q$,
@@ -417,6 +445,9 @@ begin
   perform pg_temp.expect_write(
     $q$delete from public.projects where title_ar in ('rls-admin','rls-fixture')$q$,
     'admin DELETE projects allowed');
+  perform pg_temp.expect_write(
+    $q$delete from public.contractor_requests where name = 'rls-public-submission'$q$,
+    'admin DELETE contractor requests allowed');
   -- storage.objects has a protect_delete trigger (Supabase design): direct deletes need the
   -- sanctioned storage.allow_delete_query escape hatch; RLS (is_admin) still applies.
   set storage.allow_delete_query to 'true';
@@ -456,6 +487,7 @@ begin
 
   delete from public.certificates where title_ar in ('shape-inactive','shape-active');
   delete from public.projects where title_ar in ('shape-inactive','shape-active');
+  delete from public.contractor_requests where name like 'rls-%';
 
   -- restore the test product's original publish state (D-034)
   update public.products p set is_published = s.orig_published
@@ -477,6 +509,8 @@ begin
   perform pg_temp.expect_count('select count(*) from public.social_links', 3, 'final: 3 social links');
   perform pg_temp.expect_count('select count(*) from public.site_settings', 17, 'final: 17 site settings');
   perform pg_temp.expect_count('select count(*) from public.projects', 0, 'final: projects empty');
+  perform pg_temp.expect_count('select count(*) from public.contractor_requests', 0,
+    'final: contractor requests empty');
   perform pg_temp.expect_count(
     $q$select count(*) from storage.objects where bucket_id in ('site-assets','catalogs','product-images')$q$,
     0, 'final: no storage fixture objects remain');

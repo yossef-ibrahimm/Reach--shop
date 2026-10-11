@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { randomWhatsAppNumber, waLink } from '@/lib/whatsapp';
+import { supabaseBrowser } from '@/lib/supabase/browser';
 
 const requestSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -12,7 +13,7 @@ const requestSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^\+?[0-9()\s-]{8,20}$/),
+    .regex(/^\+?[0-9() -]{8,20}$/),
   project: z.string().trim().min(2).max(160),
   buildingType: z.enum([
     'commercial',
@@ -42,8 +43,10 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
   const t = useTranslations('contractors');
   const tc = useTranslations('common');
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitState, setSubmitState] = useState<'idle' | 'saved' | 'error'>('idle');
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -84,8 +87,6 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
 
     setErrors({});
     const whatsappNumber = randomWhatsAppNumber(whatsappNumbers);
-    if (!whatsappNumber) return;
-
     const values = parsed.data;
     const message = [
       t('messageIntro'),
@@ -102,9 +103,42 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
         : []),
       `${tc('sourceTag')}: ${t('sourceName')}`,
     ].join('\n');
+    const whatsappUrl = whatsappNumber ? waLink(whatsappNumber, message) : null;
+    const whatsappWindow = whatsappUrl ? window.open('', '_blank') : null;
+    if (whatsappWindow) whatsappWindow.opener = null;
 
-    window.open(waLink(whatsappNumber, message), '_blank', 'noopener,noreferrer');
-    form.reset();
+    setSubmitting(true);
+    setSubmitState('idle');
+    try {
+      const { error } = await supabaseBrowser()
+        .from('contractor_requests')
+        .insert({
+          name: values.name,
+          company: values.company,
+          phone: values.phone,
+          project: values.project,
+          building_type: values.buildingType,
+          area: Number(values.area),
+          system: values.system,
+          tier: values.tier,
+          drawing_name: drawingFile?.name ?? null,
+        });
+      if (error) throw error;
+
+      form.reset();
+      setSubmitState('saved');
+      if (whatsappUrl && whatsappWindow) {
+        whatsappWindow.location.href = whatsappUrl;
+      } else if (whatsappUrl) {
+        window.location.assign(whatsappUrl);
+      }
+    } catch (error) {
+      console.error('[contractor-requests] submission failed', error);
+      whatsappWindow?.close();
+      setSubmitState('error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fieldClass =
@@ -112,7 +146,11 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
   const labelClass = 'mb-1.5 block text-sm font-bold';
 
   return (
-    <form onSubmit={submit} noValidate className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    <form
+      onSubmit={(event) => void submit(event)}
+      noValidate
+      className="grid grid-cols-1 gap-5 sm:grid-cols-2"
+    >
       {(
         [
           ['name', 'text', 'name'],
@@ -298,20 +336,25 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
       </div>
 
       <div className="sm:col-span-2">
-        {whatsappNumbers.length > 0 ? (
-          <button
-            type="submit"
-            className="bg-primary hover:bg-primary-hover inline-flex h-12 w-full items-center justify-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
-          >
-            {tc('requestBoq')}
-            <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
-          </button>
-        ) : (
-          <p role="status" className="border-border bg-surface-alt rounded-md border p-4">
-            {t('whatsappUnavailable')}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bg-primary hover:bg-primary-hover inline-flex h-12 w-full items-center justify-center gap-2 rounded-md px-6 font-bold text-white transition-colors disabled:cursor-wait disabled:opacity-60"
+        >
+          {submitting ? t('saving') : tc('requestBoq')}
+          <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
+        </button>
+        <p className="text-muted mt-3 text-sm">{t('submissionNote')}</p>
+        {submitState === 'saved' && (
+          <p role="status" className="mt-3 text-sm font-bold text-green-700">
+            {whatsappNumbers.length > 0 ? t('submitted') : t('submittedNoWhatsApp')}
           </p>
         )}
-        <p className="text-muted mt-3 text-sm">{t('submissionNote')}</p>
+        {submitState === 'error' && (
+          <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
+            {t('submitFailed')}
+          </p>
+        )}
       </div>
     </form>
   );

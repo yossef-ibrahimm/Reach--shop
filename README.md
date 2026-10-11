@@ -4,7 +4,8 @@ Bilingual (Arabic default / English) catalog site for fire-alarm equipment.
 **Static export** (GitHub Pages) + **Supabase** backend (free tiers only).
 Source of truth for scope and rules: [`PROJECT_SPEC.md`](./PROJECT_SPEC.md).
 
-> Status: **Phase 2 — Public site — DONE**. See [`docs/PROGRESS.md`](./docs/PROGRESS.md).
+> Status: **Phase 5 — deployment repair in progress**; contractor-request inbox implementation is
+> recorded in [`docs/PROGRESS.md`](./docs/PROGRESS.md).
 
 ## Requirements
 
@@ -37,12 +38,13 @@ copy .env.example .env.local   # Windows (or: cp .env.example .env.local)
 
 Database schema lives in [`supabase/migrations/`](./supabase/migrations) (applied in filename order):
 
-| Migration             | Contents                                                                      |
-| --------------------- | ----------------------------------------------------------------------------- |
-| `…0001_functions.sql` | `public.is_admin()` (JWT `app_metadata.role = 'admin'`), `set_updated_at()`   |
-| `…0002_schema.sql`    | 11 tables (lookup, products, content) + indexes + `updated_at` trigger        |
-| `…0003_rls.sql`       | RLS enabled on all tables — 29 policies: public read / admin write            |
-| `…0004_storage.sql`   | Buckets `product-images`, `catalogs`, `site-assets` + storage object policies |
+| Migration                          | Contents                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `…0001_functions.sql`              | `public.is_admin()` (JWT `app_metadata.role = 'admin'`), `set_updated_at()`    |
+| `…0002_schema.sql`                 | 11 tables (lookup, products, content) + indexes + `updated_at` trigger         |
+| `…0003_rls.sql`                    | RLS enabled on all 11 original tables — 29 policies: public read / admin write |
+| `…0004_storage.sql`                | Buckets `product-images`, `catalogs`, `site-assets` + storage object policies  |
+| `20261011…contractor_requests.sql` | Private contractor-request inbox: anon submit only; admin read/manage          |
 
 Seed data: [`supabase/seed.sql`](./supabase/seed.sql) — categories, brands, spec
 definitions and all 65 products from spec Appendix A, **as unpublished drafts**.
@@ -67,8 +69,9 @@ npx supabase start --exclude=gotrue,realtime,storage-api,imgproxy,mailpit,postgr
 
 ### RLS verification (Phase 1 DoD)
 
-After `db reset`, the suite asserts: anon cannot write **any** table, anon cannot read
-drafts, admin (JWT with `app_metadata.role='admin'`) can do everything:
+After `db reset`, the suite asserts: anon can submit but cannot read/change contractor
+requests, authenticated non-admins cannot submit, anon cannot write other tables or read drafts, and admin (JWT with
+`app_metadata.role='admin'`) can manage submissions:
 
 ```bash
 psql -v ON_ERROR_STOP=1 "postgresql://postgres:postgres@127.0.0.1:56022/postgres" < supabase/tests/rls_verify.sql
@@ -90,7 +93,7 @@ npx supabase gen types typescript --local --schema public > src/lib/supabase/dat
 ### Hosted project setup
 
 1. **Create the project** — [supabase.com](https://supabase.com) → New project (free tier).
-2. **Apply migrations** — either paste the four files from `supabase/migrations/` into the
+2. **Apply migrations** — either paste the files from `supabase/migrations/` into the
    SQL Editor in order, or link the CLI: `npx supabase link --project-ref <ref>` → `npx supabase db push`.
 3. **Seed** — run the contents of `supabase/seed.sql` in the SQL Editor.
    (Products stay hidden until `is_published = true`.)
@@ -110,6 +113,12 @@ npx supabase gen types typescript --local --schema public > src/lib/supabase/dat
 
 6. **Environment variables** — Dashboard → _Project Settings → API_ → copy the Project URL
    and `anon` public key into `.env.local` (see table below).
+
+The contractors form stores the submitted project/contact details in
+`public.contractor_requests`, then opens WhatsApp for the visitor to review and send the message.
+Only the request INSERT is allowed anonymously; RLS prevents public reads or changes. Admins can
+view and delete requests at `/admin/requests/`. Selected drawing files are not uploaded; only their
+file names are stored.
 
 ## Environment variables
 

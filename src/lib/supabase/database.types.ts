@@ -57,6 +57,17 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"contractor_requests": {
+                  Row: {
+                    "area": number,"building_type": string,"company": string,"created_at": string,"drawing_name": string | null,"id": string,"name": string,"phone": string,"project": string,"system": string,"tier": string
+                  }
+                  Insert: {
+                    "area": number,"building_type": string,"company": string,"created_at"?: string,"drawing_name"?: string | null,"id"?: string,"name": string,"phone": string,"project": string,"system": string,"tier": string
+                  }
+                  Update: {
+                    "area"?: number,"building_type"?: string,"company"?: string,"created_at"?: string,"drawing_name"?: string | null,"id"?: string,"name"?: string,"phone"?: string,"project"?: string,"system"?: string,"tier"?: string
+                  }
+                  Relationships: []
                 },"product_images": {
                   Row: {
                     "alt_ar": string | null,"alt_en": string | null,"id": string,"product_id": string,"sort_order": number,"storage_path": string,"thumb_url": string | null,"url": string

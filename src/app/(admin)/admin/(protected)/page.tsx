@@ -3,7 +3,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { AlertTriangle, Award, FileEdit, Loader2, Package, PackagePlus, Phone } from 'lucide-react';
+import {
+  AlertTriangle,
+  Award,
+  ClipboardList,
+  FileEdit,
+  Loader2,
+  Package,
+  PackagePlus,
+  Phone,
+} from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { PublishChanges } from '@/features/admin/deploy/publish-changes';
 
@@ -144,6 +153,13 @@ export default function AdminDashboardPage() {
           >
             <Package aria-hidden="true" className="size-4" />
             {t('manageProducts')}
+          </Link>
+          <Link
+            href="/admin/requests/"
+            className="border-border bg-surface hover:bg-surface-alt inline-flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors"
+          >
+            <ClipboardList aria-hidden="true" className="size-4" />
+            {t('manageRequests')}
           </Link>
           <Link
             href="/admin/settings/"

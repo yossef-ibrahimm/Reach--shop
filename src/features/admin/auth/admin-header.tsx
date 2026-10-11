@@ -3,7 +3,15 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Award, ExternalLink, LayoutDashboard, LogOut, Package, Phone } from 'lucide-react';
+import {
+  Award,
+  ClipboardList,
+  ExternalLink,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  Phone,
+} from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { basePath } from '@/lib/env';
 
@@ -38,6 +46,10 @@ export function AdminHeader() {
           <Link href="/admin/products/" className={navLink}>
             <Package aria-hidden="true" className={icon} />
             {t('meta.products')}
+          </Link>
+          <Link href="/admin/requests/" className={navLink}>
+            <ClipboardList aria-hidden="true" className={icon} />
+            {t('meta.requests')}
           </Link>
           <Link href="/admin/settings/" className={navLink}>
             <Phone aria-hidden="true" className={icon} />

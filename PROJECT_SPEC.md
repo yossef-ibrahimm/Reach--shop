@@ -228,6 +228,14 @@ create table projects (                             -- optional: past work for t
   image_url text, storage_path text,
   sort_order int not null default 0, is_active boolean not null default true
 );
+
+create table contractor_requests (                  -- public project / BOQ form submissions
+  id uuid primary key default gen_random_uuid(),
+  name text not null, company text not null, phone text not null, project text not null,
+  building_type text not null, area numeric not null check (area > 0),
+  system text not null, tier text not null, drawing_name text,
+  created_at timestamptz not null default now()
+);
 ```
 
 Also: an `updated_at` trigger on `products`; indexes on `products(category_id)`, `(brand_id)`,
@@ -238,6 +246,9 @@ Also: an `updated_at` trigger on `products`; indexes on `products(category_id)`,
   products; `categories`, `brands`, `series`, `spec_definitions`; `certificates`/`contact_numbers`/
   `social_links`/`projects` where `is_active`; `site_settings`.
 - **INSERT / UPDATE / DELETE** on all tables: `public.is_admin()` only.
+- Exception: `anon` may **INSERT only** into `contractor_requests` to submit the public
+  contractors form. It has no public SELECT/UPDATE/DELETE policy; admins can read and manage
+  these submissions. Validate allowed values and field lengths with database constraints.
 - `products` SELECT also allowed when `public.is_admin()` (to see drafts in admin).
 - Auth settings: **disable public sign-ups**. Create the single admin user manually and set
   `app_metadata.role = 'admin'`. Document the exact steps in the README.
@@ -299,12 +310,18 @@ Content from `site_settings` + `certificates`.
 ### 6.6 Contact
 All numbers (label + call + WhatsApp), email, address, hours, map link, social links.
 
-### 6.7 SEO
+### 6.7 Contractors and consultants
+The public BOQ / quotation form stores validated contact and project details in
+`contractor_requests`, then opens WhatsApp for the visitor to review and send the prepared message.
+Selected drawings are not uploaded; only the optional file name is stored. The protected admin
+inbox at `/admin/requests/` lists submissions newest-first and permits deletion.
+
+### 6.8 SEO
 `sitemap.xml` and `robots.txt` (generated at build, include both locales); canonical URLs;
 `hreflang`; JSON-LD `LocalBusiness` (name, phones, address, `sameAs` = social links) on Home/Contact;
 per-page localized `<title>`/meta description. Admin routes: `noindex` and excluded from sitemap.
 
-### 6.8 Design direction
+### 6.9 Design direction
 Professional and trustworthy, safety-industry feel: deep navy/charcoal base, a restrained fire-red
 accent, generous whitespace, clear typographic hierarchy, consistent card system. **RTL-first**
 (design Arabic first, English mirrors). Accessible: semantic HTML, keyboard navigation, visible
@@ -329,6 +346,7 @@ reserved aspect ratios (no layout shift).
 | `/admin/products/` | **Products list** |
 | `/admin/products/new/` | **Add product** |
 | `/admin/products/edit/?id=<uuid>` | **Edit product** (same form as Add) |
+| `/admin/requests/` | **Contractor and consultant BOQ / quotation requests** |
 | `/admin/categories/`, `/brands/`, `/series/`, `/specs/` | Lookup management (Phase 4) |
 | `/admin/settings/` | Site settings, contact numbers, social links (Phase 4) |
 | `/admin/certificates/`, `/admin/projects/` | Trust content (Phase 4) |
