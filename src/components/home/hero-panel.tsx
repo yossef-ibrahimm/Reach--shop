@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState, useSyncExternalStore } from 'react';
 
 type Locale = 'ar' | 'en';
@@ -94,7 +96,12 @@ const COPY: Record<Locale, HeroCopy> = {
       'Alarm activated across the building',
       'Evacuation in progress via the safe exit',
     ],
-    types: { smoke: 'Smoke detector', heat: 'Heat detector', mcp: 'Manual call point', siren: 'Sounder' },
+    types: {
+      smoke: 'Smoke detector',
+      heat: 'Heat detector',
+      mcp: 'Manual call point',
+      siren: 'Sounder',
+    },
     exit: 'EXIT',
   },
 };
@@ -157,12 +164,33 @@ function FloorPlan({ stage, copy, reduced, onHover }: FloorPlanProps) {
 
       {/* الغرف */}
       {ROOMS.map((r) => {
-        const alarmTint = stage === 2 ? 'rgba(239,68,68,0.07)' : stage === 3 ? 'rgba(16,185,129,0.07)' : 'rgba(148,163,184,0.04)';
-        return <rect key={r.id} x={r.x} y={r.y} width={r.w} height={r.h} fill={alarmTint} style={{ transition: 'fill 500ms' }} />;
+        const alarmTint =
+          stage === 2
+            ? 'rgba(239,68,68,0.07)'
+            : stage === 3
+              ? 'rgba(16,185,129,0.07)'
+              : 'rgba(148,163,184,0.04)';
+        return (
+          <rect
+            key={r.id}
+            x={r.x}
+            y={r.y}
+            width={r.w}
+            height={r.h}
+            fill={alarmTint}
+            style={{ transition: 'fill 500ms' }}
+          />
+        );
       })}
 
       {/* توهج الحريق */}
-      <circle cx="290" cy="190" r="70" fill="url(#fireGlow)" style={{ opacity: stage >= 1 && stage <= 2 ? 1 : 0, transition: 'opacity 600ms' }} />
+      <circle
+        cx="290"
+        cy="190"
+        r="70"
+        fill="url(#fireGlow)"
+        style={{ opacity: stage >= 1 && stage <= 2 ? 1 : 0, transition: 'opacity 600ms' }}
+      />
 
       {/* الجدران */}
       <g stroke="#475569" strokeWidth="3" strokeLinecap="round" fill="none">
@@ -172,12 +200,27 @@ function FloorPlan({ stage, copy, reduced, onHover }: FloorPlanProps) {
 
       {/* باب المخرج */}
       <rect
-        x="170" y="237" width="60" height="6" rx="3"
+        x="170"
+        y="237"
+        width="60"
+        height="6"
+        rx="3"
         fill={stage === 3 ? '#10b981' : '#334155'}
-        style={{ transition: 'fill 400ms', filter: stage === 3 ? 'drop-shadow(0 0 8px rgba(16,185,129,0.9))' : 'none' }}
+        style={{
+          transition: 'fill 400ms',
+          filter: stage === 3 ? 'drop-shadow(0 0 8px rgba(16,185,129,0.9))' : 'none',
+        }}
       />
-      <text x="200" y="260" textAnchor="middle" fontSize="10" fontWeight="700" letterSpacing="1.5"
-        fill={stage === 3 ? '#34d399' : '#64748b'} style={{ transition: 'fill 400ms' }}>
+      <text
+        x="200"
+        y="260"
+        textAnchor="middle"
+        fontSize="10"
+        fontWeight="700"
+        letterSpacing="1.5"
+        fill={stage === 3 ? '#34d399' : '#64748b'}
+        style={{ transition: 'fill 400ms' }}
+      >
         {copy.exit}
       </text>
 
@@ -199,22 +242,47 @@ function FloorPlan({ stage, copy, reduced, onHover }: FloorPlanProps) {
             {pulsing && !reduced && (
               <circle cx={d.x} cy={d.y} r="9" fill="none" stroke={tone.fill} strokeWidth="2">
                 <animate attributeName="r" from="9" to="26" dur="1.2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" from="0.8" to="0" dur="1.2s" repeatCount="indefinite" />
+                <animate
+                  attributeName="opacity"
+                  from="0.8"
+                  to="0"
+                  dur="1.2s"
+                  repeatCount="indefinite"
+                />
               </circle>
             )}
             {d.type === 'siren' && stage === 2 && !reduced && (
               <circle cx={d.x} cy={d.y} r="9" fill="none" stroke="#ef4444" strokeWidth="1.5">
                 <animate attributeName="r" from="9" to="38" dur="1.6s" repeatCount="indefinite" />
-                <animate attributeName="opacity" from="0.6" to="0" dur="1.6s" repeatCount="indefinite" />
+                <animate
+                  attributeName="opacity"
+                  from="0.6"
+                  to="0"
+                  dur="1.6s"
+                  repeatCount="indefinite"
+                />
               </circle>
             )}
             {isSquare ? (
-              <rect x={d.x - 8} y={d.y - 8} width="16" height="16" rx="3" fill={tone.fill}
-                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }} />
+              <rect
+                x={d.x - 8}
+                y={d.y - 8}
+                width="16"
+                height="16"
+                rx="3"
+                fill={tone.fill}
+                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }}
+              />
             ) : (
-              <circle cx={d.x} cy={d.y} r={d.type === 'siren' ? 7 : 8} fill={tone.fill}
-                stroke="#0f172a" strokeWidth="2"
-                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }} />
+              <circle
+                cx={d.x}
+                cy={d.y}
+                r={d.type === 'siren' ? 7 : 8}
+                fill={tone.fill}
+                stroke="#0f172a"
+                strokeWidth="2"
+                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }}
+              />
             )}
             <circle cx={d.x} cy={d.y} r="3" fill="#0f172a" opacity="0.55" />
           </g>
@@ -241,13 +309,12 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
     return () => clearInterval(t);
   }, [hovered, reduced]);
 
-  const stageColor = [
-    'text-emerald-400',
-    'text-amber-400',
-    'text-red-400',
-    'text-emerald-400',
-  ][stage];
-  const caption = hovered ? `${copy.types[hovered.type]} · ${hovered.name[lang] ?? hovered.name.ar}` : copy.captions[stage];
+  const stageColor = ['text-emerald-400', 'text-amber-400', 'text-red-400', 'text-emerald-400'][
+    stage
+  ];
+  const caption = hovered
+    ? `${copy.types[hovered.type]} · ${hovered.name[lang] ?? hovered.name.ar}`
+    : copy.captions[stage];
 
   return (
     <section className="relative isolate overflow-hidden bg-slate-950">
@@ -263,8 +330,14 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
           WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
         }}
       />
-      <div aria-hidden="true" className="absolute -top-32 end-0 -z-10 h-96 w-96 rounded-full bg-red-600/15 blur-3xl" />
-      <div aria-hidden="true" className="absolute -bottom-32 start-0 -z-10 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div
+        aria-hidden="true"
+        className="absolute end-0 -top-32 -z-10 h-96 w-96 rounded-full bg-red-600/15 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute start-0 -bottom-32 -z-10 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl"
+      />
 
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:py-24">
         {/* ====== النص ====== */}
@@ -274,7 +347,7 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
             {copy.badge}
           </span>
 
-          <h1 className="mt-6 text-4xl font-extrabold leading-[1.25] text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-6 text-4xl leading-[1.25] font-extrabold text-white sm:text-5xl lg:text-6xl">
             {copy.title}
             <span className="mt-1 block bg-gradient-to-r from-red-400 via-orange-400 to-amber-300 bg-clip-text text-transparent rtl:bg-gradient-to-l">
               {copy.highlight}
@@ -290,7 +363,12 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
               className="group inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-500 hover:shadow-red-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
             >
               {copy.ctaPrimary}
-              <span aria-hidden="true" className="transition group-hover:-translate-x-1 ltr:group-hover:translate-x-1 ltr:rotate-180 rtl:rotate-0">←</span>
+              <span
+                aria-hidden="true"
+                className="transition group-hover:-translate-x-1 ltr:rotate-180 ltr:group-hover:translate-x-1 rtl:rotate-0"
+              >
+                ←
+              </span>
             </button>
             <button
               type="button"
@@ -320,12 +398,20 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
                 <span className="relative flex h-2 w-2">
-                  {!reduced && <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${stage === 2 ? 'bg-red-400' : 'bg-emerald-400'}`} />}
-                  <span className={`relative inline-flex h-2 w-2 rounded-full ${stage === 2 ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                  {!reduced && (
+                    <span
+                      className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${stage === 2 ? 'bg-red-400' : 'bg-emerald-400'}`}
+                    />
+                  )}
+                  <span
+                    className={`relative inline-flex h-2 w-2 rounded-full ${stage === 2 ? 'bg-red-500' : 'bg-emerald-500'}`}
+                  />
                 </span>
                 {copy.panelTitle}
               </div>
-              <span className={`rounded-md border border-slate-700 bg-slate-950 px-2 py-0.5 font-mono text-[10px] font-bold ${stageColor}`}>
+              <span
+                className={`rounded-md border border-slate-700 bg-slate-950 px-2 py-0.5 font-mono text-[10px] font-bold ${stageColor}`}
+              >
                 {COPY.en.stages[stage].toUpperCase()}
               </span>
             </div>
@@ -335,7 +421,11 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
             </div>
 
             {/* التعليق الحي */}
-            <p dir={lang === 'ar' ? 'rtl' : 'ltr'} className="mt-3 min-h-[1.25rem] text-center text-sm font-semibold text-slate-300" aria-live="polite">
+            <p
+              dir={lang === 'ar' ? 'rtl' : 'ltr'}
+              className="mt-3 min-h-[1.25rem] text-center text-sm font-semibold text-slate-300"
+              aria-live="polite"
+            >
               {caption}
             </p>
 
@@ -358,7 +448,11 @@ export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) 
                     </button>
                     <div className="mt-1.5 h-0.5 overflow-hidden rounded bg-slate-800">
                       {i === stage && !hovered && !reduced && (
-                        <div key={`${stage}-bar`} className="h-full origin-left bg-red-500" style={{ animation: `heroFill ${STAGE_MS}ms linear forwards` }} />
+                        <div
+                          key={`${stage}-bar`}
+                          className="h-full origin-left bg-red-500"
+                          style={{ animation: `heroFill ${STAGE_MS}ms linear forwards` }}
+                        />
                       )}
                     </div>
                   </li>
