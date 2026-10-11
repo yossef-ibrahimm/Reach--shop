@@ -2,7 +2,9 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { Clock, Menu, Phone, X } from 'lucide-react';
-import Image from 'next/image'; import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import faviconImg from './favicon.png';
+ import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
 import { telLink } from '@/lib/whatsapp';
@@ -148,16 +150,16 @@ export function SiteHeader({
             className={cn('group flex shrink-0 items-center gap-2.5 rounded-md', focusRing)}
             aria-label={companyName}
           >
-            <span className="bg-navy-900 flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
-              <Image
-                src="/favicon.ico"
-                alt=""
-                width={36}
-                height={36}
-                unoptimized
-                className="h-full w-full object-contain"
-              />
-            </span>
+         <span className="bg-navy-900 flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
+  <Image
+    src={faviconImg}
+    alt=""
+    width={36}
+    height={36}
+    unoptimized
+    className="h-full w-full object-contain"
+  />
+</span>
             <span className="max-w-[48vw] truncate text-lg font-extrabold sm:max-w-none">
               {companyName}
             </span>
