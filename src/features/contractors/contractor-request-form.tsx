@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { randomWhatsAppNumber, waLink } from '@/lib/whatsapp';
 import { supabaseBrowser } from '@/lib/supabase/browser';
+import { supabaseErrorKind } from '@/lib/supabase/error-kind';
 
 const requestSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -44,7 +45,9 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
   const tc = useTranslations('common');
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitState, setSubmitState] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [submitState, setSubmitState] = useState<
+    'idle' | 'saved' | 'networkError' | 'setupError' | 'permissionError' | 'invalidError' | 'error'
+  >('idle');
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -135,7 +138,18 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
     } catch (error) {
       console.error('[contractor-requests] submission failed', error);
       whatsappWindow?.close();
-      setSubmitState('error');
+      const errorKind = supabaseErrorKind(error);
+      setSubmitState(
+        errorKind === 'network'
+          ? 'networkError'
+          : errorKind === 'missingTable'
+            ? 'setupError'
+            : errorKind === 'permission'
+              ? 'permissionError'
+              : errorKind === 'invalidData'
+                ? 'invalidError'
+                : 'error',
+      );
     } finally {
       setSubmitting(false);
     }
@@ -353,6 +367,26 @@ export function ContractorRequestForm({ whatsappNumbers }: Props) {
         {submitState === 'error' && (
           <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
             {t('submitFailed')}
+          </p>
+        )}
+        {submitState === 'networkError' && (
+          <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
+            {t('submitErrors.network')}
+          </p>
+        )}
+        {submitState === 'setupError' && (
+          <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
+            {t('submitErrors.setup')}
+          </p>
+        )}
+        {submitState === 'permissionError' && (
+          <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
+            {t('submitErrors.permission')}
+          </p>
+        )}
+        {submitState === 'invalidError' && (
+          <p role="alert" className="text-fire-700 mt-3 text-sm font-bold">
+            {t('submitErrors.invalid')}
           </p>
         )}
       </div>

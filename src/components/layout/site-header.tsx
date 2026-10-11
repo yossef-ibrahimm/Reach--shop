@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Clock, Menu, Phone, X } from 'lucide-react';
+import { Clock, MapPin, Menu, Phone, X } from 'lucide-react';
 import Image from 'next/image';
 import faviconImg from './favicon.png';
 import { useTranslations } from 'next-intl';
@@ -15,6 +15,7 @@ type Props = {
   locale: string;
   companyName: string;
   hours: string;
+  mapUrl: string;
   phones: { id: string; number: string }[];
   whatsappNumbers: string[];
   whatsappMessage: string;
@@ -27,6 +28,7 @@ export function SiteHeader({
   locale,
   companyName,
   hours,
+  mapUrl,
   phones,
   whatsappNumbers,
   whatsappMessage,
@@ -187,6 +189,21 @@ export function SiteHeader({
           </nav>
 
           <div className="ms-auto flex items-center gap-2">
+            {mapUrl && (
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={tc('mapLink')}
+                className={cn(
+                  'border-border hover:bg-surface-alt inline-flex h-11 items-center justify-center gap-2 rounded-md border px-3 text-sm font-bold transition-colors',
+                  focusRing,
+                )}
+              >
+                <MapPin aria-hidden="true" className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">{tc('mapLink')}</span>
+              </a>
+            )}
             <button
               type="button"
               onClick={switchLocale}

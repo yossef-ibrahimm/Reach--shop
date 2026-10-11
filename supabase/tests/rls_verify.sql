@@ -99,6 +99,12 @@ begin
     $q$select count(*) from pg_policies where schemaname = 'storage'
        and policyname in ('storage_objects_public_read','storage_objects_admin_write')$q$,
     2, '2 storage policies present');
+  perform pg_temp.expect_count(
+    $q$select count(*) from (
+         select has_table_privilege('anon', 'public.contractor_requests', 'INSERT') as anon_insert,
+                has_table_privilege('authenticated', 'public.contractor_requests', 'SELECT') as admin_read
+       ) privileges where anon_insert and admin_read$q$,
+    1, 'contractor request API grants present');
 end $$;
 
 -- ── 2. anon reads: drafts invisible, lookups visible ─────────────────────

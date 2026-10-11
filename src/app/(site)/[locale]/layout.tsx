@@ -70,6 +70,7 @@ export default async function SiteRootLayout({ children, params }: LayoutProps) 
             locale={locale}
             companyName={setting(site, 'company_name', locale)}
             hours={setting(site, 'hours', locale)}
+            mapUrl={setting(site, 'map_url', locale)}
             phones={phones}
             whatsappNumbers={waNumbers}
             whatsappMessage={headerWhatsAppMessage}

@@ -197,6 +197,12 @@
     "submitted": "Your request has been saved. You can review and send the WhatsApp message.",
     "submittedNoWhatsApp": "Your request was saved successfully. Our sales team will follow up.",
     "submitFailed": "We could not save your request. Check your connection and try again; WhatsApp was not opened.",
+    "submitErrors": {
+      "network": "The request service cannot be reached right now. Check your connection and try again; WhatsApp was not opened.",
+      "setup": "The request service has not been configured on this site yet. Your details were not saved and WhatsApp was not opened.",
+      "permission": "The database denied this submission. Your details were not saved and WhatsApp was not opened.",
+      "invalid": "The database rejected some of the submitted details. Review the form and try again; WhatsApp was not opened."
+    },
     "sourceName": "Contractors and consultants",
     "downloadsTitle": "Product catalogs and files",
     "downloadsIntro": "Only download links already attached to products are shown."

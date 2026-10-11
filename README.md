@@ -45,6 +45,7 @@ Database schema lives in [`supabase/migrations/`](./supabase/migrations) (applie
 | `…0003_rls.sql`                    | RLS enabled on all 11 original tables — 29 policies: public read / admin write |
 | `…0004_storage.sql`                | Buckets `product-images`, `catalogs`, `site-assets` + storage object policies  |
 | `20261011…contractor_requests.sql` | Private contractor-request inbox: anon submit only; admin read/manage          |
+| `20261011…api_grants.sql`          | Explicit Data API table grants for contractor requests + schema-cache reload   |
 
 Seed data: [`supabase/seed.sql`](./supabase/seed.sql) — categories, brands, spec
 definitions and all 65 products from spec Appendix A, **as unpublished drafts**.
@@ -95,6 +96,8 @@ npx supabase gen types typescript --local --schema public > src/lib/supabase/dat
 1. **Create the project** — [supabase.com](https://supabase.com) → New project (free tier).
 2. **Apply migrations** — either paste the files from `supabase/migrations/` into the
    SQL Editor in order, or link the CLI: `npx supabase link --project-ref <ref>` → `npx supabase db push`.
+   If `contractor_requests` already exists in the hosted database, also run
+   `20261011000002_contractor_requests_api_grants.sql` there; do not rerun the table-creation migration.
 3. **Seed** — run the contents of `supabase/seed.sql` in the SQL Editor.
    (Products stay hidden until `is_published = true`.)
 4. **Disable public signups** — Dashboard → _Authentication → Sign In / Providers_ →

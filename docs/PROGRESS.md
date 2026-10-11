@@ -202,3 +202,15 @@ Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent
 - Supabase generated types currently include the new table shape but need regeneration against the migration once the local Supabase stack is available.
 
 **Decision**: D-061. The owner approved the narrowly scoped anon INSERT-only RLS exception for project requests; requests remain private and admin-managed.
+
+### 2026-10-11 — Contractor request delivery diagnostics
+**Built**
+- Added an additive hosted migration for explicit Supabase Data API table grants and a PostgREST schema-cache reload. RLS still limits anonymous users to submitting and admins to managing records.
+- Added bilingual form error feedback that differentiates a network outage, missing/unavailable table, permission denial, and rejected field data; admin loading now identifies setup, network, and permission problems.
+- Extended RLS verification to assert required API grants. Documented applying the additive migration to an already-created hosted table.
+
+**Verified**
+- `npm run lint`, `npm run typecheck`, targeted Prettier checks, and `git diff --check` pass.
+- Actual submission/list verification remains blocked: `.env.local` targets stopped local Supabase at `127.0.0.1:56021` (`ECONNREFUSED`), Docker Desktop is unavailable, and the hosted project has not been configured in this checkout. No application credentials were changed.
+
+**Decision**: D-062. See `docs/DECISIONS.md`; hosted configuration and migration application remain prerequisites for end-to-end delivery.

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2, Search, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { supabaseBrowser } from '@/lib/supabase/browser';
+import { supabaseErrorKind } from '@/lib/supabase/error-kind';
 import type { Database } from '@/lib/supabase/database.types';
 
 type ContractorRequest = Database['public']['Tables']['contractor_requests']['Row'];
@@ -29,6 +30,9 @@ export function ContractorRequestsManager() {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [failedOffset, setFailedOffset] = useState<number | null>(null);
+  const [loadErrorKind, setLoadErrorKind] = useState<ReturnType<typeof supabaseErrorKind> | null>(
+    null,
+  );
   const [search, setSearch] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteErrorId, setDeleteErrorId] = useState<string | null>(null);
@@ -36,6 +40,7 @@ export function ContractorRequestsManager() {
   const loadPage = useCallback(async (offset: number, append: boolean) => {
     setLoading(true);
     setFailedOffset(null);
+    setLoadErrorKind(null);
     try {
       const { data, count } = await fetchContractorRequests(offset);
 
@@ -45,6 +50,7 @@ export function ContractorRequestsManager() {
     } catch (error) {
       console.error('[admin contractor requests] load failed', error);
       setFailedOffset(offset);
+      setLoadErrorKind(supabaseErrorKind(error));
     } finally {
       setLoading(false);
     }
@@ -57,12 +63,16 @@ export function ContractorRequestsManager() {
       try {
         const { data, count } = await fetchContractorRequests(0);
         if (!active) return;
+        setLoadErrorKind(null);
         setRequests(data);
         setTotal(count ?? data.length);
         setHasMore(count !== null ? data.length < count : data.length === PAGE_SIZE);
       } catch (error) {
         console.error('[admin contractor requests] load failed', error);
-        if (active) setFailedOffset(0);
+        if (active) {
+          setFailedOffset(0);
+          setLoadErrorKind(supabaseErrorKind(error));
+        }
       } finally {
         if (active) setLoading(false);
       }
@@ -166,7 +176,15 @@ export function ContractorRequestsManager() {
           role="alert"
           className="bg-fire-50 text-fire-700 flex flex-wrap items-center justify-between gap-3 rounded-md p-4 text-sm font-bold"
         >
-          <span>{t('loadFailed')}</span>
+          <span>
+            {loadErrorKind === 'network'
+              ? t('loadErrors.network')
+              : loadErrorKind === 'missingTable'
+                ? t('loadErrors.setup')
+                : loadErrorKind === 'permission'
+                  ? t('loadErrors.permission')
+                  : t('loadFailed')}
+          </span>
           <button
             type="button"
             onClick={() => void loadPage(failedOffset, failedOffset > 0)}
