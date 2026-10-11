@@ -1,21 +1,21 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Clock, Menu, Phone, X } from 'lucide-react';
 import Image from 'next/image';
 import faviconImg from './favicon.png';
- import { useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
-import { telLink } from '@/lib/whatsapp';
 import { FaWhatsapp } from 'react-icons/fa6';
 import { WhatsAppLink } from '@/components/ui/whatsapp-link';
+import { RandomPhoneLink } from '@/components/ui/random-phone-link';
 
 type Props = {
   locale: string;
   companyName: string;
   hours: string;
-  phones: { id: string; label: string; number: string }[];
+  phones: { id: string; number: string }[];
   whatsappNumbers: string[];
   whatsappMessage: string;
 };
@@ -33,6 +33,7 @@ export function SiteHeader({
 }: Props) {
   const t = useTranslations('nav');
   const tc = useTranslations('common');
+  const contactNumbers = useMemo(() => phones.map((phone) => phone.number), [phones]);
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -105,10 +106,9 @@ export function SiteHeader({
               <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 {phones.map((phone) => (
                   <li key={phone.id} className="flex items-center gap-1.5">
-                    <span className="text-slate-400">{phone.label}:</span>
-                    <a
-                      href={telLink(phone.number)}
-                      dir="ltr"
+                    <span className="text-slate-400">{tc('sales')}:</span>
+                    <RandomPhoneLink
+                      numbers={contactNumbers}
                       className={cn(
                         'phone inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
                         'focus-visible:outline-white',
@@ -116,8 +116,7 @@ export function SiteHeader({
                       )}
                     >
                       <Phone aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.75} />
-                      {phone.number}
-                    </a>
+                    </RandomPhoneLink>
                   </li>
                 ))}
 
@@ -150,16 +149,16 @@ export function SiteHeader({
             className={cn('group flex shrink-0 items-center gap-2.5 rounded-md', focusRing)}
             aria-label={companyName}
           >
-         <span className=" flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
-  <Image
-    src={faviconImg}
-    alt=""
-    width={40}
-    height={40}
-    unoptimized
-    className="h-full w-full object-contain"
-  />
-</span>
+            <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
+              <Image
+                src={faviconImg}
+                alt=""
+                width={40}
+                height={40}
+                unoptimized
+                className="h-full w-full object-contain"
+              />
+            </span>
             <span className="max-w-[48vw] truncate text-lg font-extrabold sm:max-w-none">
               {companyName}
             </span>

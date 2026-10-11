@@ -175,3 +175,15 @@ Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent
 - Full Phase 4 remains incomplete; this change covers only contact numbers and certificates.
 
 **Decisions**: D-057 added.
+
+### 2026-10-11 — Public sales-number rotation
+**Built**
+- Every public phone-number placement independently selects from all active contact numbers on page load, including the header, footer, contact blocks, home CTA and product call CTA. Each call link uses the same randomized value shown beside it.
+- Public contact labels identify the pool as Sales / مبيعات. WhatsApp destinations continue to use only active numbers explicitly enabled for WhatsApp.
+
+**Verified**
+- `npm run lint` and `npm run typecheck` pass.
+- `npm run build` compiles and passes TypeScript, but static export is blocked while collecting product pages because the configured local Supabase endpoint is unavailable (`fetch failed`). RTL/LTR browser verification could not be performed without a completed export.
+- Official API documentation checked; installed versions remain Next.js 16.3.8, next-intl 4.14.8, Tailwind CSS 4.3.3 and supabase-js 2.117.2 (D-060).
+
+**Decision**: D-060. Static HTML/no-JavaScript uses the first active number; each hydrated phone location switches to its own random selection.

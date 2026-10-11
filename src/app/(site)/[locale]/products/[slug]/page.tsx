@@ -7,6 +7,7 @@ import { ProductCard } from '@/components/ui/product-card';
 import { AvailabilityBadge } from '@/components/ui/availability-badge';
 import { ProductGallery } from '@/components/product/product-gallery';
 import { QuoteWhatsAppButton } from '@/components/product/quote-whatsapp-button';
+import { RandomPhoneLink } from '@/components/ui/random-phone-link';
 import { Link } from '@/lib/i18n/navigation';
 import type { Json } from '@/lib/supabase/database.types';
 import {
@@ -18,7 +19,6 @@ import {
   whatsappNumbers,
 } from '@/lib/supabase/queries';
 import type { SpecDefinition } from '@/lib/products/types';
-import { telLink } from '@/lib/whatsapp';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -131,6 +131,7 @@ export default async function ProductPage({ params }: PageProps) {
     : null;
 
   const waNumbers = whatsappNumbers(site);
+  const contactNumbers = site.phones.map((phone) => phone.number);
   const crumbs: Crumb[] = [
     { label: tNav('home'), href: '/' },
     { label: tNav('products'), href: '/products/' },
@@ -221,14 +222,14 @@ export default async function ProductPage({ params }: PageProps) {
                 <span className="phone text-muted text-xs">({catalogLang})</span>
               </a>
             )}
-            {site.phones[0] && (
-              <a
-                href={telLink(site.phones[0].number)}
+            {contactNumbers.length > 0 && (
+              <RandomPhoneLink
+                numbers={contactNumbers}
                 className="border-border bg-surface hover:bg-surface-alt inline-flex h-11 items-center gap-2 rounded-md border px-4 font-bold transition-colors"
+                numberClassName="phone"
               >
                 {tc('call')}
-                <span className="phone">{site.phones[0].number}</span>
-              </a>
+              </RandomPhoneLink>
             )}
           </div>
 

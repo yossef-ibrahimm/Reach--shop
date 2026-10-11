@@ -7,6 +7,7 @@ import { CategoryTile } from '@/components/ui/category-tile';
 import { ProductCard } from '@/components/ui/product-card';
 import { SectionHeading } from '@/components/ui/section-heading';
 import { WhatsAppLink } from '@/components/ui/whatsapp-link';
+import { RandomPhoneLink } from '@/components/ui/random-phone-link';
 import { Link } from '@/lib/i18n/navigation';
 import { splitHighlight } from '@/lib/text';
 import {
@@ -20,7 +21,6 @@ import {
   setting,
   whatsappNumbers,
 } from '@/lib/supabase/queries';
-import { telLink } from '@/lib/whatsapp';
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -41,7 +41,7 @@ export default async function HomePage() {
   const heroEyebrow = setting(site, 'hero_eyebrow', locale);
   const heroTitle = setting(site, 'hero_title', locale);
   const heroLead = setting(site, 'hero_lead', locale);
-  const phone = site.phones[0]?.number ?? null;
+  const contactNumbers = site.phones.map((phone) => phone.number);
   const waNumbers = whatsappNumbers(site);
   const whatsappMessage = `${tc('waGreeting')}\n${tc('sourceTag')}: ${tc('pageHome')}`;
 
@@ -298,14 +298,13 @@ export default async function HomePage() {
               {tc('requestBoq')}
               <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
             </Link>
-            {phone && (
-              <a
-                href={telLink(phone)}
+            {contactNumbers.length > 0 && (
+              <RandomPhoneLink
+                numbers={contactNumbers}
                 className="inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-5 font-bold transition-colors hover:bg-white/10"
               >
                 <Phone aria-hidden="true" className="h-4 w-4" />
-                <span className="phone">{phone}</span>
-              </a>
+              </RandomPhoneLink>
             )}
             {waNumbers.length > 0 && (
               <WhatsAppLink

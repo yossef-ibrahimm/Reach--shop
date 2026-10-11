@@ -5,7 +5,7 @@ import { FaFacebookF, FaInstagram, FaLink, FaYoutube } from 'react-icons/fa6';
 import type { IconType } from 'react-icons';
 import type { SiteData } from '@/lib/supabase/queries';
 import { setting } from '@/lib/supabase/queries';
-import { telLink } from '@/lib/whatsapp';
+import { RandomPhoneLink } from '@/components/ui/random-phone-link';
 
 const SOCIAL_ICONS: Record<string, IconType> = {
   facebook: FaFacebookF,
@@ -26,6 +26,7 @@ export function SiteFooter({ site, locale }: Props) {
   const hours = setting(site, 'hours', locale);
   const mapUrl = setting(site, 'map_url', locale);
   const year = new Date().getFullYear();
+  const contactNumbers = site.phones.map((phone) => phone.number);
 
   const links = [
     { href: '/', label: t('nav.home') },
@@ -88,14 +89,11 @@ export function SiteFooter({ site, locale }: Props) {
           <ul className="mt-3 space-y-2 text-sm text-slate-400">
             {site.phones.map((number) => (
               <li key={number.id}>
-                <span className="block">{locale === 'en' ? number.label_en : number.label_ar}</span>
-                <a
-                  href={telLink(number.number)}
-                  dir="ltr"
+                <span className="block">{t('common.sales')}</span>
+                <RandomPhoneLink
+                  numbers={contactNumbers}
                   className="phone inline-block py-1 transition-colors hover:text-white"
-                >
-                  {number.number}
-                </a>
+                />
               </li>
             ))}
           </ul>

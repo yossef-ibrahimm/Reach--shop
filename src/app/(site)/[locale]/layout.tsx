@@ -51,9 +51,8 @@ export default async function SiteRootLayout({ children, params }: LayoutProps) 
   const waNumbers = whatsappNumbers(site);
   const headerWhatsAppMessage = `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageHeader')}`;
   const floatingWhatsAppMessage = `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageFloating')}`;
-  const phones = site.phones.map(({ id, label_ar, label_en, number }) => ({
+  const phones = site.phones.map(({ id, number }) => ({
     id,
-    label: locale === 'en' ? label_en : label_ar,
     number,
   }));
 

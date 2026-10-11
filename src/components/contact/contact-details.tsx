@@ -1,11 +1,10 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { FaFacebookF, FaInstagram, FaLink, FaWhatsapp, FaYoutube } from 'react-icons/fa6';
+import { FaFacebookF, FaInstagram, FaLink, FaYoutube } from 'react-icons/fa6';
 import type { IconType } from 'react-icons';
 import type { SiteData } from '@/lib/supabase/queries';
 import { setting, whatsappNumbers } from '@/lib/supabase/queries';
-import { telLink } from '@/lib/whatsapp';
-import { WhatsAppLink } from '@/components/ui/whatsapp-link';
+import { RandomContactNumber } from '@/components/contact/random-contact-number';
 const SOCIAL_ICONS: Record<string, IconType> = {
   facebook: FaFacebookF,
   instagram: FaInstagram,
@@ -31,6 +30,7 @@ export function ContactDetails({ site, locale, greeting }: Props) {
   const email = setting(site, 'email', locale);
   const message = greeting;
   const waNumbers = whatsappNumbers(site);
+  const contactNumbers = site.phones.map((phone) => phone.number);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -41,41 +41,17 @@ export function ContactDetails({ site, locale, greeting }: Props) {
             {t('contact.numbersTitle')}
           </h2>
           <ul className="space-y-3">
-            {site.phones.map((number) => (
-              <li
-                key={number.id}
-                className="bg-surface-alt flex flex-wrap items-center gap-3 rounded-md px-4 py-3"
-              >
-                <span className="font-semibold">
-                  {locale === 'en' ? number.label_en : number.label_ar}
-                </span>
-                <a
-                  href={telLink(number.number)}
-                  dir="ltr"
-                  className="phone text-fire-700 inline-block py-1 font-bold"
-                >
-                  {number.number}
-                </a>
-                <span className="ms-auto flex gap-2">
-                  <a
-                    href={telLink(number.number)}
-                    className="border-border bg-surface inline-flex h-11 items-center gap-1.5 rounded-md border px-3 text-xs font-bold transition-colors hover:bg-white"
-                  >
-                    <Phone aria-hidden="true" className="h-3.5 w-3.5" />
-                    {t('common.call')}
-                  </a>
-                  {number.is_whatsapp && waNumbers.length > 0 && (
-                    <WhatsAppLink
-                      numbers={waNumbers}
-                      message={message}
-                      className="bg-whatsapp hover:bg-navy-950 inline-flex h-11 items-center gap-1.5 rounded-md px-3 text-xs font-bold text-white transition-colors"
-                    >
-                      <FaWhatsapp aria-hidden="true" className="h-3.5 w-3.5" />
-                      {t('common.whatsapp')}
-                    </WhatsAppLink>
-                  )}
-                </span>
-              </li>
+            {site.phones.map((phone) => (
+              <RandomContactNumber
+                key={phone.id}
+                numbers={contactNumbers}
+                whatsappNumbers={waNumbers}
+                showWhatsApp={phone.is_whatsapp}
+                message={message}
+                salesLabel={t('common.sales')}
+                callLabel={t('common.call')}
+                whatsappLabel={t('common.whatsapp')}
+              />
             ))}
           </ul>
         </section>
