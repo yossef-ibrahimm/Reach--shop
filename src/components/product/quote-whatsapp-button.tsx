@@ -2,10 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import { FaWhatsapp } from 'react-icons/fa6';
-import { waLink } from '@/lib/whatsapp';
+import { randomWhatsAppNumber, waLink } from '@/lib/whatsapp';
 
 type Props = {
-  number: string;
+  numbers: string[];
   productName: string;
   productUrl: string;
   label: string;
@@ -16,14 +16,18 @@ type Props = {
  * product name + the live page URL. Falls back to the product-name message
  * without JavaScript; the onClick adds the exact URL of the viewed page.
  */
-export function QuoteWhatsAppButton({ number, productName, productUrl, label }: Props) {
+export function QuoteWhatsAppButton({ numbers, productName, productUrl, label }: Props) {
   const t = useTranslations('product');
   const tc = useTranslations('common');
   const baseMessage = `${t('quoteMessage', { name: productName })}\n${productUrl}\n${tc('sourceTag')}: ${tc('pageProduct')}`;
-  const fallback = waLink(number, baseMessage);
+  const fallbackNumber = numbers[0];
+  if (!fallbackNumber) return null;
+  const fallback = waLink(fallbackNumber, baseMessage);
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
+    const number = randomWhatsAppNumber(numbers);
+    if (!number) return;
     const message = `${t('quoteMessage', { name: productName })}\n${window.location.href}\n${tc('sourceTag')}: ${tc('pageProduct')}`;
     window.open(waLink(number, message), '_blank', 'noopener,noreferrer');
   };

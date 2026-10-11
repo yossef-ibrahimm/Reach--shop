@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { z } from 'zod';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { waLink } from '@/lib/whatsapp';
+import { randomWhatsAppNumber, waLink } from '@/lib/whatsapp';
 
 const requestSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -35,10 +35,10 @@ const requestSchema = z.object({
 type FieldErrors = Record<string, string>;
 
 type Props = {
-  whatsappNumber: string | null;
+  whatsappNumbers: string[];
 };
 
-export function ContractorRequestForm({ whatsappNumber }: Props) {
+export function ContractorRequestForm({ whatsappNumbers }: Props) {
   const t = useTranslations('contractors');
   const tc = useTranslations('common');
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -83,6 +83,7 @@ export function ContractorRequestForm({ whatsappNumber }: Props) {
     }
 
     setErrors({});
+    const whatsappNumber = randomWhatsAppNumber(whatsappNumbers);
     if (!whatsappNumber) return;
 
     const values = parsed.data;
@@ -297,7 +298,7 @@ export function ContractorRequestForm({ whatsappNumber }: Props) {
       </div>
 
       <div className="sm:col-span-2">
-        {whatsappNumber ? (
+        {whatsappNumbers.length > 0 ? (
           <button
             type="submit"
             className="bg-primary hover:bg-primary-hover inline-flex h-12 w-full items-center justify-center gap-2 rounded-md px-6 font-bold text-white transition-colors"

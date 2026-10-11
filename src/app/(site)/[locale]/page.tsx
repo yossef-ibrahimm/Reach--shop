@@ -6,6 +6,7 @@ import { HeroPanel } from '@/components/home/hero-panel';
 import { CategoryTile } from '@/components/ui/category-tile';
 import { ProductCard } from '@/components/ui/product-card';
 import { SectionHeading } from '@/components/ui/section-heading';
+import { WhatsAppLink } from '@/components/ui/whatsapp-link';
 import { Link } from '@/lib/i18n/navigation';
 import { splitHighlight } from '@/lib/text';
 import {
@@ -17,9 +18,9 @@ import {
   getSiteData,
   getSpecDefinitions,
   setting,
-  whatsappNumber,
+  whatsappNumbers,
 } from '@/lib/supabase/queries';
-import { telLink, waLink } from '@/lib/whatsapp';
+import { telLink } from '@/lib/whatsapp';
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -41,10 +42,8 @@ export default async function HomePage() {
   const heroTitle = setting(site, 'hero_title', locale);
   const heroLead = setting(site, 'hero_lead', locale);
   const phone = site.phones[0]?.number ?? null;
-  const waNumber = whatsappNumber(site);
-  const whatsappUrl = waNumber
-    ? waLink(waNumber, `${tc('waGreeting')}\n${tc('sourceTag')}: ${tc('pageHome')}`)
-    : null;
+  const waNumbers = whatsappNumbers(site);
+  const whatsappMessage = `${tc('waGreeting')}\n${tc('sourceTag')}: ${tc('pageHome')}`;
 
   const whyItems = [1, 2, 3]
     .map((slot) => ({
@@ -96,16 +95,15 @@ export default async function HomePage() {
               >
                 {tc('browseProducts')}
               </Link>
-              {whatsappUrl && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {waNumbers.length > 0 && (
+                <WhatsAppLink
+                  numbers={waNumbers}
+                  message={whatsappMessage}
                   className="bg-whatsapp hover:bg-navy-950 inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
                 >
                   <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
                   {tc('whatsapp')}
-                </a>
+                </WhatsAppLink>
               )}
             </div>
           </div>
@@ -296,16 +294,15 @@ export default async function HomePage() {
                 <span className="phone">{phone}</span>
               </a>
             )}
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+            {waNumbers.length > 0 && (
+              <WhatsAppLink
+                numbers={waNumbers}
+                message={whatsappMessage}
                 className="bg-whatsapp hover:bg-navy-950 inline-flex h-12 items-center gap-2 rounded-md px-5 font-bold text-white transition-colors"
               >
                 <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
                 {tc('whatsapp')}
-              </a>
+              </WhatsAppLink>
             )}
           </div>
         </div>

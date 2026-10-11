@@ -161,3 +161,17 @@ Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent
 - Local TypeScript/lint/build and live GitHub Pages deployment still need to be run/verified. Production wiring additionally requires GitHub Pages Actions configuration, two GitHub Actions secrets, deployment of the Edge Function, and Supabase secrets `GITHUB_TOKEN` / `GITHUB_REPO`.
 
 **Decisions**: D-053–D-056 added. Phase 3 remains pending; this urgent Phase 5 repair was explicitly approved by the owner. **Open**: production secrets and Edge Function must be configured in the hosted dashboards before the button can work.
+
+### 2026-10-11 — Phase 4: contact numbers and certificates (partial)
+**Built**
+- Added protected admin management pages at `/admin/settings/` for bilingual contact numbers and `/admin/certificates/` for bilingual certificate metadata and image uploads.
+- Added create, edit, and delete flows, active/WhatsApp controls, display ordering, E.164 phone validation, certificate image type/size validation, and cleanup of replaced/deleted certificate images in the `site-assets` bucket.
+- Linked both pages from the admin header and dashboard shortcuts. All writes continue to rely on Supabase RLS and the signed-in admin session.
+
+**Verified**
+- `npm run lint`, `npm run typecheck`, and Prettier checks on all changed files pass. Next.js compiled the changes and completed TypeScript validation during `npm run build`.
+- Static page-data collection is blocked because the configured local Supabase endpoint is unavailable (`fetch failed` while loading products); the build therefore did not finish exporting routes. No authenticated browser CRUD test was possible without an available Supabase project/session.
+- Installed versions checked from the lockfile/runtime; Supabase Storage and Next.js App Router APIs checked against official docs.
+- Full Phase 4 remains incomplete; this change covers only contact numbers and certificates.
+
+**Decisions**: D-057 added.

@@ -234,6 +234,8 @@
       "login": "تسجيل الدخول",
       "dashboard": "لوحة التحكم",
       "products": "المنتجات",
+      "contactNumbers": "أرقام التواصل",
+      "certificates": "الشهادات",
       "newProduct": "إضافة منتج",
       "editProduct": "تعديل منتج"
     },
@@ -272,6 +274,8 @@
       "shortcuts": "اختصارات",
       "addProduct": "إضافة منتج",
       "manageProducts": "إدارة المنتجات",
+      "manageContactNumbers": "إدارة أرقام التواصل",
+      "manageCertificates": "إدارة الشهادات",
       "publish": {
         "title": "تحديث الموقع المنشور",
         "description": "أرسل التغييرات المحفوظة في قاعدة البيانات إلى الموقع. قد يستغرق ظهورها من دقيقة إلى 3 دقائق.",

@@ -8,7 +8,7 @@ import {
   getCategories,
   getSiteData,
   getSpecDefinitions,
-  whatsappNumber,
+  whatsappNumbers,
 } from '@/lib/supabase/queries';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +34,7 @@ export default async function ProductsPage() {
     products.some((product) => product.category?.slug === category.slug),
   );
 
-  const waNumber = whatsappNumber(site);
+  const waNumbers = whatsappNumbers(site);
 
   return (
     <main id="main-content" className="container-page py-10 lg:py-14">
@@ -65,7 +65,7 @@ export default async function ProductsPage() {
           categories={populatedCategories}
           brands={brands}
           specDefs={specDefs}
-          whatsappNumber={waNumber}
+          whatsappNumbers={waNumbers}
         />
       </Suspense>
     </main>

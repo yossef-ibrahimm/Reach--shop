@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ArrowRight, BadgeCheck, Boxes, CalendarClock, ClipboardList } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { ContractorRequestForm } from '@/features/contractors/contractor-request-form';
-import { getAllProducts, getSiteData, whatsappNumber } from '@/lib/supabase/queries';
+import { getAllProducts, getSiteData, whatsappNumbers } from '@/lib/supabase/queries';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('meta.contractors');
@@ -72,7 +72,7 @@ export default async function ContractorsPage() {
             <p className="text-muted mt-3 leading-relaxed">{t('formIntro')}</p>
           </div>
           <div className="border-border bg-surface rounded-lg border p-5 shadow-sm sm:p-8">
-            <ContractorRequestForm whatsappNumber={whatsappNumber(site)} />
+            <ContractorRequestForm whatsappNumbers={whatsappNumbers(site)} />
           </div>
         </div>
       </section>

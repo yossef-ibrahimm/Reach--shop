@@ -7,8 +7,7 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { FloatingWhatsApp } from '@/components/layout/floating-whatsapp';
 import { fontVariables } from '@/lib/fonts';
 import { routing } from '@/lib/i18n/routing';
-import { getSiteData, setting, whatsappNumber, whatsappNumbers } from '@/lib/supabase/queries';
-import { waLink } from '@/lib/whatsapp';
+import { getSiteData, setting, whatsappNumbers } from '@/lib/supabase/queries';
 import '@/app/globals.css';
 
 export function generateStaticParams() {
@@ -49,12 +48,9 @@ export default async function SiteRootLayout({ children, params }: LayoutProps) 
     getTranslations({ locale, namespace: 'common' }),
   ]);
 
-  const waNumber = whatsappNumber(site);
-  const headerWhatsAppMessage = `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageHeader')}`;
-  const whatsappUrl = waNumber
-    ? waLink(waNumber, `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageFloating')}`)
-    : null;
   const waNumbers = whatsappNumbers(site);
+  const headerWhatsAppMessage = `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageHeader')}`;
+  const floatingWhatsAppMessage = `${t('waGreeting')}\n${t('sourceTag')}: ${t('pageFloating')}`;
   const phones = site.phones.map(({ id, label_ar, label_en, number }) => ({
     id,
     label: locale === 'en' ? label_en : label_ar,
@@ -81,7 +77,13 @@ export default async function SiteRootLayout({ children, params }: LayoutProps) 
           />
           <div className="flex-1">{children}</div>
           <SiteFooter site={site} locale={locale} />
-          {whatsappUrl && <FloatingWhatsApp href={whatsappUrl} label={t('whatsapp')} />}
+          {waNumbers.length > 0 && (
+            <FloatingWhatsApp
+              numbers={waNumbers}
+              message={floatingWhatsAppMessage}
+              label={t('whatsapp')}
+            />
+          )}
         </NextIntlClientProvider>
       </body>
     </html>

@@ -5,8 +5,9 @@ import { Clock, Flame, Menu, Phone, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
-import { telLink, waLink } from '@/lib/whatsapp';
+import { telLink } from '@/lib/whatsapp';
 import { FaWhatsapp } from 'react-icons/fa6';
+import { WhatsAppLink } from '@/components/ui/whatsapp-link';
 
 type Props = {
   locale: string;
@@ -35,8 +36,6 @@ export function SiteHeader({
   const [menuOpen, setMenuOpen] = useState(false);
   const mobileNavId = useId();
   const headerRef = useRef<HTMLElement>(null);
-
-  const waNumber = whatsappNumbers[0];
 
   const cleanPath = pathname.replace(/\/+$/, '') || '/';
 
@@ -120,23 +119,11 @@ export function SiteHeader({
                   </li>
                 ))}
 
-                {waNumber && whatsappNumbers.length > 0 && (
+                {whatsappNumbers.length > 0 && (
                   <li>
-                    <a
-                      href={waLink(waNumber, whatsappMessage)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(event) => {
-                        const randomNumber =
-                          whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
-                        if (randomNumber === waNumber) return;
-                        event.preventDefault();
-                        window.open(
-                          waLink(randomNumber, whatsappMessage),
-                          '_blank',
-                          'noopener,noreferrer',
-                        );
-                      }}
+                    <WhatsAppLink
+                      numbers={whatsappNumbers}
+                      message={whatsappMessage}
                       className={cn(
                         'inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
                         'focus-visible:outline-white',
@@ -145,7 +132,7 @@ export function SiteHeader({
                     >
                       <FaWhatsapp aria-hidden="true" className="h-3.5 w-3.5" />
                       {tc('whatsapp')}
-                    </a>
+                    </WhatsAppLink>
                   </li>
                 )}
               </ul>

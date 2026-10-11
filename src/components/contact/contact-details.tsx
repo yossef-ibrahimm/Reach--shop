@@ -3,8 +3,9 @@ import { useTranslations } from 'next-intl';
 import { FaFacebookF, FaInstagram, FaLink, FaWhatsapp, FaYoutube } from 'react-icons/fa6';
 import type { IconType } from 'react-icons';
 import type { SiteData } from '@/lib/supabase/queries';
-import { setting } from '@/lib/supabase/queries';
-import { telLink, waLink } from '@/lib/whatsapp';
+import { setting, whatsappNumbers } from '@/lib/supabase/queries';
+import { telLink } from '@/lib/whatsapp';
+import { WhatsAppLink } from '@/components/ui/whatsapp-link';
 const SOCIAL_ICONS: Record<string, IconType> = {
   facebook: FaFacebookF,
   instagram: FaInstagram,
@@ -29,6 +30,7 @@ export function ContactDetails({ site, locale, greeting }: Props) {
   const mapUrl = setting(site, 'map_url', locale);
   const email = setting(site, 'email', locale);
   const message = greeting;
+  const waNumbers = whatsappNumbers(site);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -62,16 +64,15 @@ export function ContactDetails({ site, locale, greeting }: Props) {
                     <Phone aria-hidden="true" className="h-3.5 w-3.5" />
                     {t('common.call')}
                   </a>
-                  {number.is_whatsapp && (
-                    <a
-                      href={waLink(number.number, message)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  {number.is_whatsapp && waNumbers.length > 0 && (
+                    <WhatsAppLink
+                      numbers={waNumbers}
+                      message={message}
                       className="bg-whatsapp hover:bg-navy-950 inline-flex h-11 items-center gap-1.5 rounded-md px-3 text-xs font-bold text-white transition-colors"
                     >
                       <FaWhatsapp aria-hidden="true" className="h-3.5 w-3.5" />
                       {t('common.whatsapp')}
-                    </a>
+                    </WhatsAppLink>
                   )}
                 </span>
               </li>

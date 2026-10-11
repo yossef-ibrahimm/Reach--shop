@@ -21,8 +21,8 @@ import type {
   SpecDefinition,
 } from '@/lib/products/types';
 import { ProductCard } from '@/components/ui/product-card';
+import { WhatsAppLink } from '@/components/ui/whatsapp-link';
 import { useDialogBehavior } from '@/lib/use-dialog';
-import { waLink } from '@/lib/whatsapp';
 
 const PAGE_SIZE = 24;
 const SYSTEM_VALUES = ['conventional', 'addressable'] as const;
@@ -51,7 +51,7 @@ type Props = {
   categories: CategoryData[];
   brands: BrandData[];
   specDefs: SpecDefinition[];
-  whatsappNumber: string | null;
+  whatsappNumbers: string[];
 };
 
 /**
@@ -64,7 +64,7 @@ export function ProductsExplorer({
   categories,
   brands,
   specDefs,
-  whatsappNumber,
+  whatsappNumbers,
 }: Props) {
   const t = useTranslations('products');
   const tc = useTranslations('common');
@@ -193,14 +193,9 @@ export function ProductsExplorer({
         category: selectedCategories.map((slug) => nameOf(slug, 'category')).join(', '),
       })
     : t('generalQuoteMessage');
-  const quoteUrl = whatsappNumber
-    ? waLink(
-        whatsappNumber,
-        `${quoteMessage}\n${tc('sourceTag')}: ${
-          selectedCategories.length ? tc('pageCategory') : tc('pageProducts')
-        }`,
-      )
-    : null;
+  const whatsappMessage = `${quoteMessage}\n${tc('sourceTag')}: ${
+    selectedCategories.length ? tc('pageCategory') : tc('pageProducts')
+  }`;
 
   const countFacet = (facet: FacetKey, value: string): number =>
     products.filter((product) => passes(product, facet) && facetValue(product, facet) === value)
@@ -517,16 +512,15 @@ export function ProductsExplorer({
               <SearchX aria-hidden="true" className="mx-auto h-10 w-10 text-slate-400" />
               <h2 className="mt-4 text-xl font-bold">{t('emptyTitle')}</h2>
               <p className="text-muted mx-auto mt-2 max-w-md">{t('emptyBody')}</p>
-              {quoteUrl && (
-                <a
-                  href={quoteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {whatsappNumbers.length > 0 && (
+                <WhatsAppLink
+                  numbers={whatsappNumbers}
+                  message={whatsappMessage}
                   className="bg-whatsapp hover:bg-navy-950 mt-6 inline-flex h-11 items-center gap-2 rounded-md px-5 font-bold text-white transition-colors"
                 >
                   <FaWhatsapp aria-hidden="true" className="h-4 w-4" />
                   {tc('askWa')}
-                </a>
+                </WhatsAppLink>
               )}
             </div>
           ) : (

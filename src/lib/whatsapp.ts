@@ -10,6 +10,11 @@ export function waLink(number: string, message: string): string {
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 
+/** Picks an enabled WhatsApp number at the moment the visitor follows a link. */
+export function randomWhatsAppNumber(numbers: readonly string[]): string | null {
+  return numbers[Math.floor(Math.random() * numbers.length)] ?? null;
+}
+
 /** `tel:` link — keeps the E.164 form (`tel:+20…`). */
 export function telLink(number: string): string {
   return `tel:${number}`;

@@ -15,7 +15,7 @@ import {
   getRelatedProducts,
   getSiteData,
   getSpecDefinitions,
-  whatsappNumber,
+  whatsappNumbers,
 } from '@/lib/supabase/queries';
 import type { SpecDefinition } from '@/lib/products/types';
 import { telLink } from '@/lib/whatsapp';
@@ -130,7 +130,7 @@ export default async function ProductPage({ params }: PageProps) {
         : 'AR'
     : null;
 
-  const waNumber = whatsappNumber(site);
+  const waNumbers = whatsappNumbers(site);
   const crumbs: Crumb[] = [
     { label: tNav('home'), href: '/' },
     { label: tNav('products'), href: '/products/' },
@@ -232,10 +232,10 @@ export default async function ProductPage({ params }: PageProps) {
             )}
           </div>
 
-          {waNumber && (
+          {waNumbers.length > 0 && (
             <div className="mt-4">
               <QuoteWhatsAppButton
-                number={waNumber}
+                numbers={waNumbers}
                 productName={name}
                 productUrl={`${(process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/+$/, '')}/${locale}/products/${product.slug}/`}
                 label={tc('requestBoq')}

@@ -86,11 +86,6 @@ export function whatsappNumbers(site: SiteData): string[] {
   );
 }
 
-/** The first active number explicitly enabled for WhatsApp, if one exists. */
-export function whatsappNumber(site: SiteData): string | null {
-  return whatsappNumbers(site)[0] ?? null;
-}
-
 /* ------------------------------------------------------------ products --- */
 
 const PRODUCT_SELECT = `

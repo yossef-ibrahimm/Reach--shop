@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ExternalLink, LayoutDashboard, LogOut, Package } from 'lucide-react';
+import { Award, ExternalLink, LayoutDashboard, LogOut, Package, Phone } from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { basePath } from '@/lib/env';
 
@@ -27,7 +27,10 @@ export function AdminHeader() {
         <Link href="/admin/" className="text-base font-extrabold tracking-tight">
           {t('header.brand')}
         </Link>
-        <nav aria-label={t('meta.title')} className="text-muted -ms-1 flex items-center gap-1">
+        <nav
+          aria-label={t('meta.title')}
+          className="text-muted -ms-1 flex max-w-full flex-wrap items-center gap-1"
+        >
           <Link href="/admin/" className={navLink}>
             <LayoutDashboard aria-hidden="true" className={icon} />
             {t('meta.dashboard')}
@@ -35,6 +38,14 @@ export function AdminHeader() {
           <Link href="/admin/products/" className={navLink}>
             <Package aria-hidden="true" className={icon} />
             {t('meta.products')}
+          </Link>
+          <Link href="/admin/settings/" className={navLink}>
+            <Phone aria-hidden="true" className={icon} />
+            {t('meta.contactNumbers')}
+          </Link>
+          <Link href="/admin/certificates/" className={navLink}>
+            <Award aria-hidden="true" className={icon} />
+            {t('meta.certificates')}
           </Link>
         </nav>
       </div>

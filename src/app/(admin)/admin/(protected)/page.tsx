@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { AlertTriangle, FileEdit, Loader2, Package, PackagePlus } from 'lucide-react';
+import { AlertTriangle, Award, FileEdit, Loader2, Package, PackagePlus, Phone } from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { PublishChanges } from '@/features/admin/deploy/publish-changes';
 
@@ -144,6 +144,20 @@ export default function AdminDashboardPage() {
           >
             <Package aria-hidden="true" className="size-4" />
             {t('manageProducts')}
+          </Link>
+          <Link
+            href="/admin/settings/"
+            className="border-border bg-surface hover:bg-surface-alt inline-flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors"
+          >
+            <Phone aria-hidden="true" className="size-4" />
+            {t('manageContactNumbers')}
+          </Link>
+          <Link
+            href="/admin/certificates/"
+            className="border-border bg-surface hover:bg-surface-alt inline-flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-bold transition-colors"
+          >
+            <Award aria-hidden="true" className="size-4" />
+            {t('manageCertificates')}
           </Link>
         </div>
       </section>
