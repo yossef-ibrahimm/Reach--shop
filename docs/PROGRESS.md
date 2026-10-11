@@ -1,6 +1,6 @@
 # PROGRESS
 
-Current phase: **2 — Public site — follow-up in progress (2026-10-05)**; Phase 3 remains pending approval.
+Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent deployment repair); Phase 3 remains pending.**
 
 ## Definition of done (every phase)
 - [x] `npm run build` succeeds as a static export
@@ -16,7 +16,7 @@ Current phase: **2 — Public site — follow-up in progress (2026-10-05)**; Pha
 - [x] **2 Public site** — layout/header/footer/WhatsApp, Home, Products listing (filters + search + URL state), Product page, About, Contact, 404
 - [ ] **3 Admin core** — login, guard, dashboard, products list, add/edit product, image + PDF pipeline, duplicate/delete/publish
 - [ ] **4 Admin extras** — categories, brands, series, specs, settings, certificates, projects
-- [ ] **5 Deploy** — Edge Function trigger-deploy, GitHub Actions, "Publish changes", weekly cron + external keep-alive, docs
+- [ ] **5 Deploy** — Edge Function trigger-deploy, GitHub Actions, "Publish changes", weekly cron + external keep-alive, docs (implementation restored; hosted setup and production verification pending)
 - [ ] **6 SEO & polish** — sitemap/robots/hreflang/JSON-LD/OG, a11y pass, perf pass (Lighthouse ≥ 90 mobile), empty/error states, final README
 
 ## Log
@@ -146,3 +146,18 @@ Current phase: **2 — Public site — follow-up in progress (2026-10-05)**; Pha
 - `npm run build` compiled and passed TypeScript, but failed while collecting product pages because the configured local Supabase endpoint is unavailable. The hours and contact-number migrations were not applied or database-validated.
 
 **Decisions**: D-051–D-052 added. Phone-number role mapping follows the existing seed order (sales/WhatsApp first, technical support second).
+
+### 2026-10-11 — Phase 5: restore live publishing (in progress)
+**Why**: The owner reported that database changes were not reaching GitHub Pages. GitHub reports the `Deploy Next.js to GitHub Pages` workflow as deleted on `main`; the most recent successful deployment was a `repository_dispatch` build on 2026-10-05. The dashboard also had no publish action.
+
+**Built**
+- Restored `.github/workflows/deploy.yml`: build on pushes to `main`, manual dispatch, `content-updated` repository dispatch and weekly schedule; validates required Supabase settings, builds static output and deploys the artifact to Pages.
+- Added `supabase/functions/trigger-deploy/`: verifies the caller through Supabase Auth and requires `app_metadata.role = 'admin'` before dispatching a build with the GitHub token held only in Supabase secrets.
+- Added a bilingual **Publish changes** control to the admin dashboard. After database edits, the admin can trigger a new static build and see success/failure feedback.
+- Documented GitHub Pages settings/secrets, Edge Function deployment and a free external Supabase keep-alive in the README.
+
+**Verified**
+- GitHub API confirmed the workflow is currently deleted and its latest successful run was on 2026-10-05. The previously used repository-dispatch deployment completed both build and deploy jobs successfully.
+- Local TypeScript/lint/build and live GitHub Pages deployment still need to be run/verified. Production wiring additionally requires GitHub Pages Actions configuration, two GitHub Actions secrets, deployment of the Edge Function, and Supabase secrets `GITHUB_TOKEN` / `GITHUB_REPO`.
+
+**Decisions**: D-053–D-056 added. Phase 3 remains pending; this urgent Phase 5 repair was explicitly approved by the owner. **Open**: production secrets and Edge Function must be configured in the hosted dashboards before the button can work.

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { AlertTriangle, FileEdit, Loader2, Package, PackagePlus } from 'lucide-react';
 import { supabaseBrowser } from '@/lib/supabase/browser';
+import { PublishChanges } from '@/features/admin/deploy/publish-changes';
 
 type Counts = {
   total: number;
@@ -17,7 +18,7 @@ type LoadState = { status: 'loading' } | { status: 'error' } | { status: 'ready'
 
 /**
  * Admin dashboard (PROJECT_SPEC §7): real counts computed from the database —
- * no invented statistics. "Publish changes" arrives with Phase 5.
+ * no invented statistics.
  */
 export default function AdminDashboardPage() {
   const t = useTranslations('admin.dashboard');
@@ -146,6 +147,8 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
       </section>
+
+      <PublishChanges />
     </div>
   );
 }

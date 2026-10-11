@@ -36,13 +36,7 @@ export function SiteHeader({
   const mobileNavId = useId();
   const headerRef = useRef<HTMLElement>(null);
 
-  // The first number is rendered on the server; the random one is picked after
-  // mount so server and client HTML match (no hydration mismatch).
-  const [waNumber, setWaNumber] = useState<string | undefined>(whatsappNumbers[0]);
-  useEffect(() => {
-    if (whatsappNumbers.length === 0) return;
-    setWaNumber(whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)]);
-  }, [whatsappNumbers]);
+  const waNumber = whatsappNumbers[0];
 
   const cleanPath = pathname.replace(/\/+$/, '') || '/';
 
@@ -132,6 +126,17 @@ export function SiteHeader({
                       href={waLink(waNumber, whatsappMessage)}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(event) => {
+                        const randomNumber =
+                          whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+                        if (randomNumber === waNumber) return;
+                        event.preventDefault();
+                        window.open(
+                          waLink(randomNumber, whatsappMessage),
+                          '_blank',
+                          'noopener,noreferrer',
+                        );
+                      }}
                       className={cn(
                         'inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
                         'focus-visible:outline-white',
