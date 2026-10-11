@@ -65,14 +65,23 @@ export default async function HomePage() {
   return (
     <main id="main-content">
       {/* Hero */}
-      <section className="bg-navy-950 text-inverse">
-        <div className="container-page grid grid-cols-1 items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
-          <div>
-            {heroEyebrow && <p className="text-sm font-bold text-amber-500">{heroEyebrow}</p>}
-            <h1 className="mt-3 text-[34px] leading-tight font-extrabold lg:text-5xl">
+      <section className="bg-navy-950 text-inverse relative isolate overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="border-navy-800/60 pointer-events-none absolute inset-5 rounded-2xl border sm:inset-8 lg:inset-10"
+        />
+        <div className="container-page relative grid grid-cols-1 items-center gap-10 py-14 sm:py-16 lg:grid-cols-2 lg:gap-14 lg:py-20">
+          <div className="max-w-2xl">
+            {heroEyebrow && (
+              <p className="flex items-center gap-2 text-sm font-bold text-amber-500">
+                <span aria-hidden="true" className="bg-fire-600 h-1.5 w-1.5 rounded-full" />
+                {heroEyebrow}
+              </p>
+            )}
+            <h1 className="mt-4 text-[34px] leading-[1.2] font-extrabold sm:text-5xl lg:text-[52px]">
               {splitHighlight(heroTitle).map((part, index) =>
                 part.em ? (
-                  <em key={index} className="text-fire-600 font-extrabold not-italic">
+                  <em key={index} className="text-fire-400 font-extrabold not-italic">
                     {part.text}
                   </em>
                 ) : (
@@ -80,18 +89,22 @@ export default async function HomePage() {
                 ),
               )}
             </h1>
-            {heroLead && <p className="mt-4 max-w-xl text-lg text-slate-400">{heroLead}</p>}
-            <div className="mt-8 flex flex-wrap gap-3">
+            {heroLead && (
+              <p className="mt-5 max-w-xl text-base leading-8 text-slate-200 sm:text-lg">
+                {heroLead}
+              </p>
+            )}
+            <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/contractors/"
-                className="bg-primary hover:bg-primary-hover inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
+                className="bg-primary hover:bg-primary-hover focus-visible:outline-fire-400 inline-flex h-12 items-center gap-2 rounded-md px-5 font-bold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 {tc('requestBoq')}
                 <ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
               </Link>
               <Link
                 href="/products/"
-                className="inline-flex h-12 items-center gap-2 rounded-md border border-white/25 px-6 font-bold transition-colors hover:bg-white/10"
+                className="border-navy-700 bg-navy-900/60 hover:bg-navy-800 inline-flex h-12 items-center gap-2 rounded-md border px-5 font-bold transition-colors hover:border-slate-400"
               >
                 {tc('browseProducts')}
               </Link>
@@ -99,7 +112,7 @@ export default async function HomePage() {
                 <WhatsAppLink
                   numbers={waNumbers}
                   message={whatsappMessage}
-                  className="bg-whatsapp hover:bg-navy-950 inline-flex h-12 items-center gap-2 rounded-md px-6 font-bold text-white transition-colors"
+                  className="bg-whatsapp inline-flex h-12 items-center gap-2 rounded-md px-5 font-bold text-white transition hover:brightness-110"
                 >
                   <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
                   {tc('whatsapp')}
@@ -107,7 +120,7 @@ export default async function HomePage() {
               )}
             </div>
           </div>
-          <HeroPanel />
+          <HeroPanel lang={locale === 'en' ? 'en' : 'ar'} />
         </div>
       </section>
 

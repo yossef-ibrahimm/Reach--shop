@@ -1,134 +1,105 @@
 'use client';
 
-import React, { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 type Locale = 'ar' | 'en';
-type DeviceType = 'smoke' | 'heat' | 'mcp' | 'siren';
 type Stage = 0 | 1 | 2 | 3;
+type DeviceType = 'smoke' | 'heat' | 'callPoint' | 'siren';
 
 type Device = {
   id: string;
   type: DeviceType;
   x: number;
   y: number;
-  name: Record<Locale, string>;
+  room: string;
 };
 
-type Room = {
-  id: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  fire?: boolean;
-};
-
-type HeroCopy = {
-  badge: string;
+type Copy = {
   title: string;
-  highlight: string;
-  sub: string;
-  ctaPrimary: string;
-  ctaSecondary: string;
-  stats: { value: string; label: string }[];
-  panelTitle: string;
+  demo: string;
+  exit: string;
+  safeExit: string;
   stages: [string, string, string, string];
   captions: [string, string, string, string];
-  types: Record<DeviceType, string>;
-  exit: string;
+  rooms: Record<string, string>;
+  deviceTypes: Record<DeviceType, string>;
+  legend: string;
 };
 
-type HeroPanelProps = {
-  lang?: Locale;
-  onBrowse?: () => void;
-  onContact?: () => void;
+type Props = {
+  lang: Locale;
 };
 
-type FloorPlanProps = {
-  stage: Stage;
-  copy: HeroCopy;
-  reduced: boolean;
-  onHover: (device: Device | null) => void;
-};
+const STAGE_DURATION = 3200;
+const STAGES = [0, 1, 2, 3] as const;
+const FIRE_DEVICE = 'heat-kitchen';
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
-/* ---------- المحتوى (AR / EN) ---------- */
-const COPY: Record<Locale, HeroCopy> = {
+const COPY: Record<Locale, Copy> = {
   ar: {
-    badge: 'موزع معتمد لأنظمة الإنذار',
-    title: 'حماية متكاملة لمنشأتك',
-    highlight: 'قبل ما تحتاجها',
-    sub: 'كواشف دخان وحرارة، لوحات تحكم، وسارينات من أقوى الماركات العالمية، بتكشف الخطر بدري وتخلي الإخلاء آمن وسريع.',
-    ctaPrimary: 'تصفح المنتجات',
-    ctaSecondary: 'تواصل معنا',
-    stats: [
-      { value: '65+', label: 'منتج متاح' },
-      { value: '24/7', label: 'دعم فني' },
-      { value: '100%', label: 'منتجات أصلية' },
-    ],
-    panelTitle: 'محاكاة مباشرة',
-    stages: ['طبيعي', 'كشف', 'إنذار', 'إخلاء'],
-    captions: [
-      'كل الأجهزة تعمل بشكل طبيعي',
-      'تم رصد ارتفاع في الحرارة في المطبخ',
-      'تم تفعيل الإنذار في كل المبنى',
-      'الإخلاء جارٍ عبر المخرج الآمن',
-    ],
-    types: { smoke: 'كاشف دخان', heat: 'كاشف حرارة', mcp: 'نقطة نداء يدوية', siren: 'سارينة' },
+    title: 'محاكاة توضيحية لنظام إنذار',
+    demo: 'عرض توضيحي',
     exit: 'مخرج',
+    safeExit: 'مخرج آمن',
+    stages: ['طبيعي', 'اكتشاف', 'إنذار', 'إخلاء'],
+    captions: [
+      'النظام في الوضع الطبيعي — جميع الأجهزة جاهزة',
+      'كاشف الحرارة يرصد ارتفاعًا في المطبخ',
+      'تم تفعيل الإنذار لتنبيه الموجودين',
+      'إشارة الإخلاء توجّه إلى المخرج الآمن',
+    ],
+    rooms: {
+      reception: 'الاستقبال',
+      office: 'المكتب',
+      storage: 'المخزن',
+      kitchen: 'المطبخ',
+      corridor: 'الممر',
+    },
+    deviceTypes: {
+      smoke: 'كاشف دخان',
+      heat: 'كاشف حرارة',
+      callPoint: 'نقطة نداء',
+      siren: 'سارينة',
+    },
+    legend: 'توزيع توضيحي للأجهزة',
   },
   en: {
-    badge: 'Accredited fire alarm distributor',
-    title: 'Complete protection for your facility',
-    highlight: 'before you need it',
-    sub: 'Smoke and heat detectors, control panels and sirens from leading global brands, detecting danger early and making evacuation fast and safe.',
-    ctaPrimary: 'Browse products',
-    ctaSecondary: 'Contact us',
-    stats: [
-      { value: '65+', label: 'Products' },
-      { value: '24/7', label: 'Tech support' },
-      { value: '100%', label: 'Genuine' },
-    ],
-    panelTitle: 'Live simulation',
-    stages: ['Normal', 'Detect', 'Alarm', 'Evacuate'],
+    title: 'Fire alarm system simulation',
+    demo: 'DEMO',
+    exit: 'EXIT',
+    safeExit: 'SAFE EXIT',
+    stages: ['Normal', 'Detection', 'Alarm', 'Evacuation'],
     captions: [
-      'All devices operating normally',
-      'Heat rise detected in the kitchen',
-      'Alarm activated across the building',
-      'Evacuation in progress via the safe exit',
+      'System normal — all devices are ready',
+      'Heat detector senses a rise in the kitchen',
+      'Alarm activated to alert building occupants',
+      'Evacuation signal points to the safe exit',
     ],
-    types: {
+    rooms: {
+      reception: 'Reception',
+      office: 'Office',
+      storage: 'Storage',
+      kitchen: 'Kitchen',
+      corridor: 'Corridor',
+    },
+    deviceTypes: {
       smoke: 'Smoke detector',
       heat: 'Heat detector',
-      mcp: 'Manual call point',
+      callPoint: 'Manual call point',
       siren: 'Sounder',
     },
-    exit: 'EXIT',
+    legend: 'Illustrative device layout',
   },
 };
 
-/* ---------- بيانات المخطط ---------- */
-const STAGE_MS = 2800;
-const FIRE_DEVICE = 'd3';
-const STAGES = [0, 1, 2, 3] as const;
-
 const DEVICES: Device[] = [
-  { id: 'd1', type: 'smoke', x: 110, y: 75, name: { ar: 'الاستقبال', en: 'Reception' } },
-  { id: 'd2', type: 'smoke', x: 290, y: 75, name: { ar: 'المكتب', en: 'Office' } },
-  { id: 'd3', type: 'heat', x: 290, y: 190, name: { ar: 'المطبخ', en: 'Kitchen' } },
-  { id: 'd4', type: 'smoke', x: 110, y: 190, name: { ar: 'المخزن', en: 'Storage' } },
-  { id: 'd5', type: 'mcp', x: 182, y: 118, name: { ar: 'الممر', en: 'Corridor' } },
-  { id: 'd6', type: 'siren', x: 182, y: 45, name: { ar: 'الممر', en: 'Corridor' } },
+  { id: 'smoke-reception', type: 'smoke', x: 105, y: 80, room: 'reception' },
+  { id: 'smoke-office', type: 'smoke', x: 315, y: 80, room: 'office' },
+  { id: FIRE_DEVICE, type: 'heat', x: 315, y: 225, room: 'kitchen' },
+  { id: 'smoke-storage', type: 'smoke', x: 105, y: 225, room: 'storage' },
+  { id: 'call-corridor', type: 'callPoint', x: 210, y: 160, room: 'corridor' },
+  { id: 'siren-corridor', type: 'siren', x: 210, y: 54, room: 'corridor' },
 ];
-
-const ROOMS: Room[] = [
-  { id: 'r1', x: 20, y: 20, w: 180, h: 110 },
-  { id: 'r2', x: 200, y: 20, w: 180, h: 110 },
-  { id: 'r3', x: 20, y: 130, w: 180, h: 110 },
-  { id: 'r4', x: 200, y: 130, w: 180, h: 110, fire: true },
-];
-
-/* ---------- Hook: احترام prefers-reduced-motion ---------- */
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 function subscribeToReducedMotion(onChange: () => void) {
   const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -144,147 +115,195 @@ function useReducedMotion() {
   return useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false);
 }
 
-/* ---------- ألوان الجهاز حسب المرحلة ---------- */
-function deviceTone(stage: Stage, isFireOrigin: boolean) {
-  if (stage >= 2) return { fill: '#ef4444', glow: 'rgba(239,68,68,0.9)' };
-  if (stage === 1 && isFireOrigin) return { fill: '#f59e0b', glow: 'rgba(245,158,11,0.9)' };
-  return { fill: '#10b981', glow: 'rgba(16,185,129,0.7)' };
+function stageTone(stage: Stage, device: Device) {
+  if (stage >= 2) return { fill: '#ef4444', glow: 'rgba(239,68,68,0.55)' };
+  if (stage === 1 && device.id === FIRE_DEVICE) {
+    return { fill: '#f59e0b', glow: 'rgba(245,158,11,0.6)' };
+  }
+  return { fill: '#34d399', glow: 'rgba(52,211,153,0.35)' };
 }
 
-/* ---------- المخطط ---------- */
-function FloorPlan({ stage, copy, reduced, onHover }: FloorPlanProps) {
+function FloorPlan({
+  stage,
+  copy,
+  lang,
+  reducedMotion,
+  onDeviceFocus,
+}: {
+  stage: Stage;
+  copy: Copy;
+  lang: Locale;
+  reducedMotion: boolean;
+  onDeviceFocus: (device: Device | null) => void;
+}) {
+  const roomFill = (room: string) => {
+    if (stage === 2) return 'rgba(239,68,68,0.09)';
+    if (stage === 3) return 'rgba(52,211,153,0.08)';
+    if (stage === 1 && room === 'kitchen') return 'rgba(245,158,11,0.11)';
+    return 'rgba(148,163,184,0.025)';
+  };
+
   return (
-    <svg viewBox="0 0 400 270" className="w-full" role="img" aria-label={copy.captions[stage]}>
+    <svg
+      viewBox="0 0 420 300"
+      className="block h-auto w-full"
+      role="img"
+      aria-label={copy.captions[stage]}
+    >
       <defs>
-        <radialGradient id="fireGlow">
-          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.55" />
+        <radialGradient id="detector-glow">
+          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.28" />
           <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* الغرف */}
-      {ROOMS.map((r) => {
-        const alarmTint =
-          stage === 2
-            ? 'rgba(239,68,68,0.07)'
-            : stage === 3
-              ? 'rgba(16,185,129,0.07)'
-              : 'rgba(148,163,184,0.04)';
-        return (
-          <rect
-            key={r.id}
-            x={r.x}
-            y={r.y}
-            width={r.w}
-            height={r.h}
-            fill={alarmTint}
-            style={{ transition: 'fill 500ms' }}
-          />
-        );
-      })}
-
-      {/* توهج الحريق */}
-      <circle
-        cx="290"
-        cy="190"
-        r="70"
-        fill="url(#fireGlow)"
-        style={{ opacity: stage >= 1 && stage <= 2 ? 1 : 0, transition: 'opacity 600ms' }}
-      />
-
-      {/* الجدران */}
-      <g stroke="#475569" strokeWidth="3" strokeLinecap="round" fill="none">
-        <rect x="20" y="20" width="360" height="220" rx="6" />
-        <path d="M200 20V95M200 125V240M20 130H85M115 130H285M315 130H380" strokeWidth="2" />
-      </g>
-
-      {/* باب المخرج */}
       <rect
-        x="170"
-        y="237"
-        width="60"
-        height="6"
-        rx="3"
-        fill={stage === 3 ? '#10b981' : '#334155'}
-        style={{
-          transition: 'fill 400ms',
-          filter: stage === 3 ? 'drop-shadow(0 0 8px rgba(16,185,129,0.9))' : 'none',
-        }}
+        x="28"
+        y="24"
+        width="364"
+        height="238"
+        rx="12"
+        fill="rgba(11,18,32,0.35)"
+        stroke="#334155"
+        strokeWidth="2"
+      />
+      <rect x="34" y="30" width="176" height="112" fill={roomFill('reception')} />
+      <rect x="210" y="30" width="176" height="112" fill={roomFill('office')} />
+      <rect x="34" y="142" width="176" height="114" fill={roomFill('storage')} />
+      <rect x="210" y="142" width="176" height="114" fill={roomFill('kitchen')} />
+
+      <g fill="none" stroke="#334155" strokeWidth="2">
+        <path d="M210 30v76m0 36v114" />
+        <path d="M34 142h50m34 0h268" />
+      </g>
+      <path
+        d="M210 272v-14m-24 14h48"
+        fill="none"
+        stroke={stage === 3 ? '#34d399' : '#475569'}
+        strokeWidth="4"
+        strokeLinecap="round"
+        className="transition-colors duration-300"
       />
       <text
-        x="200"
-        y="260"
+        x="210"
+        y="292"
         textAnchor="middle"
+        fill={stage === 3 ? '#6ee7b7' : '#94a3b8'}
         fontSize="10"
         fontWeight="700"
-        letterSpacing="1.5"
-        fill={stage === 3 ? '#34d399' : '#64748b'}
-        style={{ transition: 'fill 400ms' }}
+        letterSpacing={lang === 'en' ? '1.4' : '0'}
       >
-        {copy.exit}
+        {stage === 3 ? copy.safeExit : copy.exit}
       </text>
 
-      {/* الأجهزة */}
-      {DEVICES.map((d) => {
-        const tone = deviceTone(stage, d.id === FIRE_DEVICE);
-        const pulsing = (stage === 1 && d.id === FIRE_DEVICE) || stage === 2;
-        const isSquare = d.type === 'mcp';
+      <g
+        fill="#94a3b8"
+        fontSize="10"
+        fontWeight="600"
+        direction={lang === 'ar' ? 'rtl' : 'ltr'}
+        textAnchor={lang === 'ar' ? 'end' : 'start'}
+      >
+        <text x={lang === 'ar' ? '194' : '48'} y="52">
+          {copy.rooms.reception}
+        </text>
+        <text x={lang === 'ar' ? '378' : '224'} y="52">
+          {copy.rooms.office}
+        </text>
+        <text x={lang === 'ar' ? '194' : '48'} y="164">
+          {copy.rooms.storage}
+        </text>
+        <text x={lang === 'ar' ? '378' : '224'} y="164">
+          {copy.rooms.kitchen}
+        </text>
+      </g>
+
+      <path
+        d="M105 80H315V225H105V80M210 54V160H315"
+        fill="none"
+        stroke="#64748b"
+        strokeOpacity="0.4"
+        strokeWidth="1.5"
+        strokeDasharray="5 6"
+      />
+
+      {stage === 1 && (
+        <circle
+          cx="315"
+          cy="225"
+          r="48"
+          fill="url(#detector-glow)"
+          className="pointer-events-none"
+        />
+      )}
+
+      {DEVICES.map((device) => {
+        const tone = stageTone(stage, device);
+        const isAlarmSource = stage === 1 && device.id === FIRE_DEVICE;
+        const isAlerting = isAlarmSource || stage === 2;
+        const isCallPoint = device.type === 'callPoint';
+        const label = `${copy.deviceTypes[device.type]} · ${copy.rooms[device.room]}`;
+
         return (
           <g
-            key={d.id}
+            key={device.id}
             tabIndex={0}
-            onMouseEnter={() => onHover(d)}
-            onFocus={() => onHover(d)}
-            onMouseLeave={() => onHover(null)}
-            onBlur={() => onHover(null)}
-            className="cursor-pointer outline-none"
+            role="img"
+            aria-label={label}
+            onMouseEnter={() => onDeviceFocus(device)}
+            onFocus={() => onDeviceFocus(device)}
+            onMouseLeave={() => onDeviceFocus(null)}
+            onBlur={() => onDeviceFocus(null)}
+            className="cursor-help outline-none"
           >
-            {pulsing && !reduced && (
-              <circle cx={d.x} cy={d.y} r="9" fill="none" stroke={tone.fill} strokeWidth="2">
-                <animate attributeName="r" from="9" to="26" dur="1.2s" repeatCount="indefinite" />
+            {isAlerting && !reducedMotion && (
+              <circle
+                cx={device.x}
+                cy={device.y}
+                r="10"
+                fill="none"
+                stroke={tone.fill}
+                strokeWidth="2"
+                opacity="0.85"
+              >
+                <animate attributeName="r" from="10" to="26" dur="1.5s" repeatCount="indefinite" />
                 <animate
                   attributeName="opacity"
-                  from="0.8"
+                  from="0.75"
                   to="0"
-                  dur="1.2s"
+                  dur="1.5s"
                   repeatCount="indefinite"
                 />
               </circle>
             )}
-            {d.type === 'siren' && stage === 2 && !reduced && (
-              <circle cx={d.x} cy={d.y} r="9" fill="none" stroke="#ef4444" strokeWidth="1.5">
-                <animate attributeName="r" from="9" to="38" dur="1.6s" repeatCount="indefinite" />
-                <animate
-                  attributeName="opacity"
-                  from="0.6"
-                  to="0"
-                  dur="1.6s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            )}
-            {isSquare ? (
+            <circle
+              cx={device.x}
+              cy={device.y}
+              r="13"
+              fill={tone.glow}
+              className="transition-colors duration-300"
+            />
+            {isCallPoint ? (
               <rect
-                x={d.x - 8}
-                y={d.y - 8}
-                width="16"
-                height="16"
+                x={device.x - 7}
+                y={device.y - 7}
+                width="14"
+                height="14"
                 rx="3"
                 fill={tone.fill}
-                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }}
+                stroke="#0b1220"
+                strokeWidth="2"
               />
             ) : (
               <circle
-                cx={d.x}
-                cy={d.y}
-                r={d.type === 'siren' ? 7 : 8}
+                cx={device.x}
+                cy={device.y}
+                r={device.type === 'siren' ? 7 : 8}
                 fill={tone.fill}
-                stroke="#0f172a"
+                stroke="#0b1220"
                 strokeWidth="2"
-                style={{ filter: `drop-shadow(0 0 6px ${tone.glow})`, transition: 'fill 400ms' }}
               />
             )}
-            <circle cx={d.x} cy={d.y} r="3" fill="#0f172a" opacity="0.55" />
+            <circle cx={device.x} cy={device.y} r="2.5" fill="#0b1220" opacity="0.75" />
           </g>
         );
       })}
@@ -292,178 +311,114 @@ function FloorPlan({ stage, copy, reduced, onHover }: FloorPlanProps) {
   );
 }
 
-/* ---------- الهيرو ---------- */
-export function HeroPanel({ lang = 'ar', onBrowse, onContact }: HeroPanelProps) {
+export function HeroPanel({ lang }: Props) {
   const copy = COPY[lang];
-  const reduced = useReducedMotion();
+  const reducedMotion = useReducedMotion();
   const [stage, setStage] = useState<Stage>(0);
-  const [hovered, setHovered] = useState<Device | null>(null);
+  const [focusedDevice, setFocusedDevice] = useState<Device | null>(null);
 
-  // المحاكاة بتوقف لما الزائر يعمل hover على جهاز
   useEffect(() => {
-    if (hovered || reduced) return undefined;
-    const t = setInterval(
-      () => setStage((current) => STAGES[(STAGES.indexOf(current) + 1) % STAGES.length]),
-      STAGE_MS,
-    );
-    return () => clearInterval(t);
-  }, [hovered, reduced]);
+    if (focusedDevice || reducedMotion) return;
 
-  const stageColor = ['text-emerald-400', 'text-amber-400', 'text-red-400', 'text-emerald-400'][
-    stage
-  ];
-  const caption = hovered
-    ? `${copy.types[hovered.type]} · ${hovered.name[lang] ?? hovered.name.ar}`
+    const timer = window.setInterval(() => {
+      setStage((current) => STAGES[(STAGES.indexOf(current) + 1) % STAGES.length]);
+    }, STAGE_DURATION);
+
+    return () => window.clearInterval(timer);
+  }, [focusedDevice, reducedMotion]);
+
+  const activeCaption = focusedDevice
+    ? `${copy.deviceTypes[focusedDevice.type]} · ${copy.rooms[focusedDevice.room]}`
     : copy.captions[stage];
 
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950">
-      {/* خلفية: شبكة + توهج */}
+    <div className="relative mx-auto w-full max-w-[560px]" dir="ltr">
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 opacity-[0.07]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)',
-          backgroundSize: '44px 44px',
-          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-        }}
+        className="border-navy-700/70 absolute -inset-3 rounded-[28px] border"
       />
-      <div
-        aria-hidden="true"
-        className="absolute end-0 -top-32 -z-10 h-96 w-96 rounded-full bg-red-600/15 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute start-0 -bottom-32 -z-10 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl"
-      />
-
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:py-24">
-        {/* ====== النص ====== */}
-        <div className="text-start">
-          <span className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-3.5 py-1.5 text-xs font-bold text-red-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-            {copy.badge}
-          </span>
-
-          <h1 className="mt-6 text-4xl leading-[1.25] font-extrabold text-white sm:text-5xl lg:text-6xl">
-            {copy.title}
-            <span className="mt-1 block bg-gradient-to-r from-red-400 via-orange-400 to-amber-300 bg-clip-text text-transparent rtl:bg-gradient-to-l">
-              {copy.highlight}
-            </span>
-          </h1>
-
-          <p className="mt-6 max-w-xl text-base leading-8 text-slate-400 sm:text-lg">{copy.sub}</p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={onBrowse}
-              className="group inline-flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition hover:bg-red-500 hover:shadow-red-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+      <div className="border-navy-700 bg-navy-900/95 relative overflow-hidden rounded-2xl border shadow-2xl shadow-black/30">
+        <div className="border-navy-700/80 flex items-center justify-between gap-4 border-b px-4 py-3.5 sm:px-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <div
+              aria-hidden="true"
+              className="bg-navy-800 border-navy-700 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border"
             >
-              {copy.ctaPrimary}
-              <span
-                aria-hidden="true"
-                className="transition group-hover:-translate-x-1 ltr:rotate-180 ltr:group-hover:translate-x-1 rtl:rotate-0"
-              >
-                ←
+              <span className="border-fire-600 flex h-4 w-4 items-center justify-center rounded-full border-2">
+                <span className="bg-fire-600 h-1.5 w-1.5 rounded-full" />
               </span>
-            </button>
-            <button
-              type="button"
-              onClick={onContact}
-              className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3.5 text-sm font-bold text-slate-200 backdrop-blur transition hover:border-slate-500 hover:bg-slate-800/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
-            >
-              {copy.ctaSecondary}
-            </button>
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold text-slate-100 sm:text-sm">{copy.title}</p>
+              <p className="mt-0.5 text-[10px] font-medium text-slate-400 sm:text-xs">
+                {copy.legend}
+              </p>
+            </div>
           </div>
-
-          {/* شريط الثقة */}
-          <dl className="mt-10 grid max-w-md grid-cols-3 gap-4 border-t border-slate-800 pt-6">
-            {copy.stats.map((s) => (
-              <div key={s.label}>
-                <dt className="sr-only">{s.label}</dt>
-                <dd className="text-2xl font-extrabold text-white">{s.value}</dd>
-                <p className="mt-0.5 text-xs text-slate-500">{s.label}</p>
-              </div>
-            ))}
-          </dl>
+          <span className="border-navy-700 bg-navy-950 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-bold tracking-wider text-slate-200 sm:text-[10px]">
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-green-600" />
+            {copy.demo}
+          </span>
         </div>
 
-        {/* ====== اللوحة التفاعلية ====== */}
-        <div className="relative mx-auto w-full max-w-lg" dir="ltr">
-          <div className="rounded-2xl border border-slate-700/60 bg-slate-900/70 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
-            {/* الهيدر */}
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                <span className="relative flex h-2 w-2">
-                  {!reduced && (
-                    <span
-                      className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${stage === 2 ? 'bg-red-400' : 'bg-emerald-400'}`}
-                    />
-                  )}
-                  <span
-                    className={`relative inline-flex h-2 w-2 rounded-full ${stage === 2 ? 'bg-red-500' : 'bg-emerald-500'}`}
-                  />
-                </span>
-                {copy.panelTitle}
-              </div>
-              <span
-                className={`rounded-md border border-slate-700 bg-slate-950 px-2 py-0.5 font-mono text-[10px] font-bold ${stageColor}`}
-              >
-                {COPY.en.stages[stage].toUpperCase()}
-              </span>
-            </div>
-
-            <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-2">
-              <FloorPlan stage={stage} copy={copy} reduced={reduced} onHover={setHovered} />
-            </div>
-
-            {/* التعليق الحي */}
-            <p
-              dir={lang === 'ar' ? 'rtl' : 'ltr'}
-              className="mt-3 min-h-[1.25rem] text-center text-sm font-semibold text-slate-300"
-              aria-live="polite"
-            >
-              {caption}
-            </p>
-
-            {/* مؤشر المراحل */}
-            <ol className="mt-3 grid grid-cols-4 gap-2" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-              {STAGES.map((i) => {
-                const label = copy.stages[i];
-                return (
-                  <li key={label}>
-                    <button
-                      type="button"
-                      onClick={() => setStage(i)}
-                      className={`w-full rounded-lg border px-2 py-2 text-[11px] font-bold transition ${
-                        i === stage
-                          ? 'border-red-500/50 bg-red-500/15 text-red-300'
-                          : 'border-slate-800 bg-slate-900/60 text-slate-500 hover:text-slate-300'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                    <div className="mt-1.5 h-0.5 overflow-hidden rounded bg-slate-800">
-                      {i === stage && !hovered && !reduced && (
-                        <div
-                          key={`${stage}-bar`}
-                          className="h-full origin-left bg-red-500"
-                          style={{ animation: `heroFill ${STAGE_MS}ms linear forwards` }}
-                        />
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
+        <div className="px-2 pt-2 sm:px-4 sm:pt-4">
+          <div className="bg-navy-950/70 border-navy-700/70 overflow-hidden rounded-xl border px-1 py-2 sm:px-3">
+            <FloorPlan
+              stage={stage}
+              copy={copy}
+              lang={lang}
+              reducedMotion={reducedMotion}
+              onDeviceFocus={setFocusedDevice}
+            />
           </div>
+        </div>
+
+        <div className="px-4 pt-3 sm:px-5">
+          <p
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
+            aria-live="polite"
+            className="text-center text-xs leading-6 font-semibold text-slate-200 sm:min-h-6 sm:text-sm"
+          >
+            {activeCaption}
+          </p>
+        </div>
+
+        <div className="px-4 pt-4 pb-4 sm:px-5 sm:pb-5">
+          <ol
+            aria-label={copy.title}
+            className="border-navy-700 bg-navy-950/70 grid grid-cols-4 gap-1 rounded-xl border p-1"
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
+          >
+            {STAGES.map((item) => {
+              const isActive = item === stage;
+              return (
+                <li key={copy.stages[item]}>
+                  <button
+                    type="button"
+                    aria-current={isActive ? 'step' : undefined}
+                    onClick={() => setStage(item)}
+                    className={`focus-visible:outline-fire-600 min-h-10 w-full rounded-lg px-1.5 text-[10px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-2 sm:text-xs ${
+                      isActive
+                        ? 'bg-navy-800 text-white'
+                        : 'hover:bg-navy-900 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-1.5">
+                      <span
+                        aria-hidden="true"
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                          isActive ? 'bg-fire-600' : 'bg-navy-700'
+                        }`}
+                      />
+                      <span className="truncate">{copy.stages[item]}</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
-
-      <style>{`@keyframes heroFill { from { transform: scaleX(0) } to { transform: scaleX(1) } }`}</style>
-    </section>
+    </div>
   );
 }
