@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Clock, MapPin, Menu, Phone, X } from 'lucide-react';
 import Image from 'next/image';
 import faviconImg from './favicon.png';
@@ -9,7 +9,7 @@ import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/cn';
 import { FaWhatsapp } from 'react-icons/fa6';
 import { WhatsAppLink } from '@/components/ui/whatsapp-link';
-import { RandomPhoneLink } from '@/components/ui/random-phone-link';
+import { telLink } from '@/lib/whatsapp';
 
 type Props = {
   locale: string;
@@ -35,7 +35,6 @@ export function SiteHeader({
 }: Props) {
   const t = useTranslations('nav');
   const tc = useTranslations('common');
-  const contactNumbers = useMemo(() => phones.map((phone) => phone.number), [phones]);
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,7 +89,7 @@ export function SiteHeader({
   };
 
   const hasContacts = phones.length > 0;
-  const hasTopBar = Boolean(hours) || hasContacts;
+  const hasTopBar = Boolean(hours) || hasContacts || Boolean(mapUrl);
 
   return (
     <header ref={headerRef} className="sticky top-0 z-40 shadow-sm">
@@ -104,13 +103,14 @@ export function SiteHeader({
               </span>
             )}
 
-            {hasContacts && (
+            {(hasContacts || mapUrl) && (
               <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 {phones.map((phone) => (
                   <li key={phone.id} className="flex items-center gap-1.5">
                     <span className="text-slate-400">{tc('sales')}:</span>
-                    <RandomPhoneLink
-                      numbers={contactNumbers}
+                    <a
+                      href={telLink(phone.number)}
+                      dir="ltr"
                       className={cn(
                         'phone inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
                         'focus-visible:outline-white',
@@ -118,11 +118,12 @@ export function SiteHeader({
                       )}
                     >
                       <Phone aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.75} />
-                    </RandomPhoneLink>
+                      {phone.number}
+                    </a>
                   </li>
                 ))}
 
-                {whatsappNumbers.length > 0 && (
+                {hasContacts && whatsappNumbers.length > 0 && (
                   <li>
                     <WhatsAppLink
                       numbers={whatsappNumbers}
@@ -136,6 +137,24 @@ export function SiteHeader({
                       <FaWhatsapp aria-hidden="true" className="h-3.5 w-3.5" />
                       {tc('whatsapp')}
                     </WhatsAppLink>
+                  </li>
+                )}
+
+                {mapUrl && (
+                  <li>
+                    <a
+                      href={mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        'inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
+                        'focus-visible:outline-white',
+                        focusRing,
+                      )}
+                    >
+                      <MapPin aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                      {tc('mapLink')}
+                    </a>
                   </li>
                 )}
               </ul>
@@ -189,21 +208,6 @@ export function SiteHeader({
           </nav>
 
           <div className="ms-auto flex items-center gap-2">
-            {mapUrl && (
-              <a
-                href={mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={tc('mapLink')}
-                className={cn(
-                  'border-border hover:bg-surface-alt inline-flex h-11 items-center justify-center gap-2 rounded-md border px-3 text-sm font-bold transition-colors',
-                  focusRing,
-                )}
-              >
-                <MapPin aria-hidden="true" className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">{tc('mapLink')}</span>
-              </a>
-            )}
             <button
               type="button"
               onClick={switchLocale}

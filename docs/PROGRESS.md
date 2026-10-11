@@ -214,3 +214,15 @@ Current phase: **5 — Deploy — in progress (2026-10-11, owner-approved urgent
 - Actual submission/list verification remains blocked: `.env.local` targets stopped local Supabase at `127.0.0.1:56021` (`ECONNREFUSED`), Docker Desktop is unavailable, and the hosted project has not been configured in this checkout. No application credentials were changed.
 
 **Decision**: D-062. See `docs/DECISIONS.md`; hosted configuration and migration application remain prerequisites for end-to-end delivery.
+
+### 2026-10-11 — Header map placement and phone display
+**Built**
+- Moved the map link from the navigation actions into the top bar beside the contact numbers.
+- The top bar now displays every active contact number as stored; each other public phone-number placement keeps its independent random selection.
+
+**Verified**
+- `npm run lint`, `npm run typecheck`, targeted Prettier checks, and `git diff --check` pass.
+- `npm run build` compiles and passes TypeScript, but static page-data collection is blocked by the unavailable configured Supabase endpoint (`fetch failed`); no new static export was produced.
+- RTL/LTR browser verification could not be performed without a completed export.
+
+**Decision**: D-063.
