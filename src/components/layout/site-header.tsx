@@ -45,6 +45,11 @@ export function SiteHeader({
     { href: '/about/', label: t('about') },
     { href: '/contact/', label: t('contact') },
   ];
+  const phoneItems = [
+  {phone: '0599999999', label: 'Sales'},
+  {phone: '0588888888', label: 'Support'},
+  {phone: '0577777777', label: 'General Inquiries'},
+  ];
 
   const isActive = (href: string) => {
     const target = href.replace(/\/+$/, '') || '/';
@@ -106,11 +111,11 @@ export function SiteHeader({
 
             {hasContacts && (
               <ul className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                {phones.map((phone) => (
-                  <li key={phone.id} className="flex items-center gap-1.5">
+                {phoneItems.map((phone) => (
+                  <li key={phone.phone} className="flex items-center gap-1.5">
                     <span className="text-slate-400">{phone.label}:</span>
                     <a
-                      href={telLink(phone.number)}
+                      href={telLink(phone.phone)}
                       dir="ltr"
                       className={cn(
                         'phone inline-flex items-center gap-1.5 py-1 font-semibold transition-colors hover:text-white',
@@ -119,7 +124,7 @@ export function SiteHeader({
                       )}
                     >
                       <Phone aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.75} />
-                      {phone.number}
+                      {phone.phone}
                     </a>
                   </li>
                 ))}
