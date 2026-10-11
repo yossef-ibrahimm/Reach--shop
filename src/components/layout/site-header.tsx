@@ -150,12 +150,12 @@ export function SiteHeader({
             className={cn('group flex shrink-0 items-center gap-2.5 rounded-md', focusRing)}
             aria-label={companyName}
           >
-         <span className="bg-navy-900 flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
+         <span className=" flex h-9 w-9 items-center justify-center overflow-hidden rounded-md transition-transform group-hover:scale-105">
   <Image
     src={faviconImg}
     alt=""
-    width={36}
-    height={36}
+    width={40}
+    height={40}
     unoptimized
     className="h-full w-full object-contain"
   />
